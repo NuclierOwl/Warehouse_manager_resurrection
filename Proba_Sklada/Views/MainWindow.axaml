@@ -1,0 +1,96 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:dao="using:Proba_Sklada.Hardik.Dao"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" 
+        d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="Inventori_Manager.Views.MainWindow"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="Inventori_Manager">
+    <!--
+    <StackPanel>
+        <DockPanel>
+            <ComboBox Name="ComboFilter" SelectionChanged="SelectionChanged">
+                <ComboBoxItem>Все</ComboBoxItem>
+                <ComboBoxItem>По убыванию</ComboBoxItem>
+                <ComboBoxItem>По возрастанию</ComboBoxItem>
+            </ComboBox>
+
+            <TextBox Name="SerchBox" Watermark="Search" TextChanged="TextChanged"/>
+        </DockPanel>
+    
+        <TabControl>
+            <TabItem Header="Имеющиеся">
+                <ListBox Name="EstBox">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate x:DataType="dao:inventory">
+                            <Grid ColumnDefinitions="*,*">
+                                <TextBlock Grid.Column="0" Text="{Binding Name}" HorizontalAlignment="Left"/>
+                                <Grid Grid.Column="1" ColumnDefinitions="*,*" RowDefinitions="auto,auto">
+                                    <StackPanel Grid.Column="0" Grid.ColumnSpan="2" Grid.RowSpan="2" 
+                                                Spacing="10" Orientation="Vertical" HorizontalAlignment="Center">
+                                        <TextBlock Text="{Binding storage_location.Location}" HorizontalAlignment="Center"/>
+                                        <TextBlock Text="{Binding Pozishen}" HorizontalAlignment="Stretch"/>
+                                    </StackPanel>
+                                    <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Kolichestvo}" 
+                                               HorizontalAlignment="Right"/>
+                                </Grid>
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </TabItem>
+            
+            <TabItem Header="Отсутствующее">
+                <ListBox Name="NetBox">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Grid ColumnDefinitions="*,*">
+                                <TextBlock Grid.Column="0" Text="{Binding Name}" HorizontalAlignment="Left"/>
+                                <Grid Grid.Column="1" ColumnDefinitions="*,*" RowDefinitions="auto,auto">
+                                    <StackPanel Grid.Column="0" Grid.ColumnSpan="2" Grid.RowSpan="2" 
+                                                Spacing="10" Orientation="Vertical" HorizontalAlignment="Center">
+                                        <TextBlock Text="{Binding Location}" HorizontalAlignment="Center"/>
+                                        <TextBlock Text="{Binding Pozishen}" HorizontalAlignment="Stretch"/>
+                                    </StackPanel>
+                                    <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Kolichestvo}" 
+                                               HorizontalAlignment="Right"/>
+                                </Grid>
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </TabItem>
+            
+            <TabItem Header="Изменить">
+                <StackPanel>
+                    <ListBox Name="AllBox">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid ColumnDefinitions="*,*">
+                                    <TextBlock Grid.Column="0" Text="{Binding Name}" HorizontalAlignment="Left"/>
+                                    <Grid Grid.Column="1" ColumnDefinitions="*,*" RowDefinitions="auto,auto">
+                                        <StackPanel Grid.Column="0" Grid.ColumnSpan="2" Grid.RowSpan="2" 
+                                                    Spacing="10" Orientation="Vertical" HorizontalAlignment="Center">
+                                            <TextBlock Text="{Binding Location}" HorizontalAlignment="Center"/>
+                                            <TextBlock Text="{Binding Pozishen}" HorizontalAlignment="Stretch"/>
+                                        </StackPanel>
+                                        <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Kolichestvo, Mode=TwoWay}" 
+                                                 HorizontalAlignment="Right" LostFocus="LF_Kolichestvo"/>
+                                    </Grid>
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                    <Button Content="Удалить" Name="deliter" VerticalAlignment="Bottom" 
+                            HorizontalAlignment="Left" Click="DellFromDB"/>
+                </StackPanel>
+            </TabItem>
+        </TabControl>
+        
+        <Button Content="Добавить" Name="adder" VerticalAlignment="Bottom" 
+                HorizontalAlignment="Left" Click="Add_New_Click"/>
+    </StackPanel>
+    -->
+</Window>

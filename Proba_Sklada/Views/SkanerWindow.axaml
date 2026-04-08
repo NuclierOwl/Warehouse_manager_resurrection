@@ -1,0 +1,61 @@
+
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:dg="https://github.com/avaloniaui/datagrid"
+        xmlns:dao="clr-namespace:Inventori_Manager.Hardik.Dao"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="Proba_Sklada.SkanerWindow"
+        Title="Ãåíåðàòîð Strih-codeîâ">
+  <!--  
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="10"/>
+            <ColumnDefinition Width="200"/>
+        </Grid.ColumnDefinitions>
+
+        <TextBlock Grid.Row="0" Grid.Column="0" Text="Vibiri Tovar:" VerticalAlignment="Center"/>
+        <ComboBox Grid.Row="0" Grid.Column="2" 
+                  x:Name="ProductComboBox"
+                  DisplayMemberBinding="{Binding Name}"
+                  SelectedItem="{Binding SelectedProduct}"/>
+
+        <TextBlock Grid.Row="1" Grid.Column="0" Text="Strih-code:" VerticalAlignment="Center" Margin="0,10,0,0"/>
+        <TextBox Grid.Row="1" Grid.Column="2" 
+                 x:Name="BarcodeTextBox"
+                 Text="{Binding BarcodeText}"
+                 Margin="0,10,0,0"/>
+
+        <StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,20,0,0">
+            <Button Content="Generete Strih-code" Click="GenerateBarcode_Click" Margin="0,0,10,0"/>
+            <Button Content="Save to Work table" Click="SaveBarcode_Click" Margin="10,0,0,0"/>
+        </StackPanel>
+
+        <Border Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3" 
+                BorderBrush="Gray" BorderThickness="1" 
+                Margin="0,20,0,0" 
+                HorizontalAlignment="Center" 
+                VerticalAlignment="Top">
+            <Image x:Name="BarcodeImage" 
+                   Width="300" 
+                   Height="150" 
+                   Stretch="Uniform"/>
+        </Border>
+
+        <TextBlock Grid.Row="4" Grid.Column="0" Text="Genereted Strih-codeû:" Margin="0,20,0,0"/>
+        <ListBox Grid.Row="4" Grid.Column="2" 
+                 x:Name="GeneratedBarcodesListBox"
+                 Margin="0,20,0,0"
+                 DisplayMemberBinding="{Binding}"/>
+    </Grid>
+    -->
+</Window>

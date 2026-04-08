@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="Directory.Packages.props" />
+  </Folder>
+  <Project Path="Proba_Sklada.Android/Proba_Sklada.Android.csproj" />
+  <Project Path="Proba_Sklada.Browser/Proba_Sklada.Browser.csproj" />
+  <Project Path="Proba_Sklada.Desktop/Proba_Sklada.Desktop.csproj" />
+  <Project Path="Proba_Sklada.iOS/Proba_Sklada.iOS.csproj" />
+  <Project Path="Proba_Sklada/Proba_Sklada.csproj" />
+</Solution>

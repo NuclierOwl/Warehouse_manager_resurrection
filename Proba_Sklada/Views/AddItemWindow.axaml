@@ -1,0 +1,31 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="Inventori_Manager.Views.AddItemWindow"
+        Title="Добавить новый предмет"
+        Width="400"
+        Height="300"
+        WindowStartupLocation="CenterOwner">
+        
+    <StackPanel Margin="20" Spacing="15">
+        <TextBlock Text="Add item" FontSize="16" FontWeight="Bold"/>
+        
+        <Grid ColumnDefinitions="100,*" RowDefinitions="auto,auto,auto,auto,auto,auto,auto">
+            <TextBlock Grid.Row="0" Grid.Column="0" Text="Name:" VerticalAlignment="Center"/>
+            <TextBox Grid.Row="0" Grid.Column="1" Name="NameTextBox" Watermark="Введите название"/>
+            
+            <TextBlock Grid.Row="1" Grid.Column="0" Text="Location:" VerticalAlignment="Center"/>
+            <TextBox Grid.Row="1" Grid.Column="1" Name="LocationTextBox" Watermark="Введите местоположение"/>
+            
+            <TextBlock Grid.Row="2" Grid.Column="0" Text="Pozition:" VerticalAlignment="Center"/>
+            <TextBox Grid.Row="2" Grid.Column="1" Name="PositionTextBox" Watermark="Введите позицию"/>
+            
+            <TextBlock Grid.Row="3" Grid.Column="0" Text="Quantity:" VerticalAlignment="Center"/>
+            <TextBox Grid.Row="3" Grid.Column="1" Name="QuantityTextBox" Watermark="0" Text="0"/>
+        </Grid>
+        
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10">
+            <Button Content="Otmena" Click="CancelButton_Click"/>
+            <Button Content="Add" Click="AddButton_Click" IsDefault="True"/>
+        </StackPanel>
+    </StackPanel>
+</Window>

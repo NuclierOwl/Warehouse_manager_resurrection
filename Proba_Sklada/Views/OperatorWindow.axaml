@@ -1,0 +1,201 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:Inventori_Manager.ViewModels"
+        xmlns:dg="https://github.com/avaloniaui/datagrid"
+        xmlns:dao="clr-namespace:Proba_Sklada.Hardik.Dao"
+        mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="800"
+        x:Class="Inventori_Manager.OperatorWindow"
+        x:DataType="vm:InventoryViewModel"
+        Title="Warehouse Management System"
+        FontFamily="Segoe UI"
+        Background="#FF0A0A0F">
+
+    <Window.Resources>
+        <Color x:Key="PrimaryBackgroundColor">#FF0A0A0F</Color>
+        <Color x:Key="SecondaryBackgroundColor">#FF1A1A24</Color>
+        <Color x:Key="TertiaryBackgroundColor">#FF252533</Color>
+        <Color x:Key="BorderColor">#FF3A3A4D</Color>
+        <Color x:Key="AccentColor">#FF00B4D8</Color>
+        <Color x:Key="SuccessColor">#FF00CC88</Color>
+        <Color x:Key="WarningColor">#FFFFAA00</Color>
+        <Color x:Key="ErrorColor">#FFFF5555</Color>
+        <Color x:Key="PrimaryTextColor">#FFE0E0E0</Color>
+        <Color x:Key="SecondaryTextColor">#FFA0A0B0</Color>
+        <Color x:Key="DisabledTextColor">#FF606070</Color>
+        
+        <SolidColorBrush x:Key="PrimaryBackground" Color="{StaticResource PrimaryBackgroundColor}"/>
+        <SolidColorBrush x:Key="SecondaryBackground" Color="{StaticResource SecondaryBackgroundColor}"/>
+        <SolidColorBrush x:Key="TertiaryBackground" Color="{StaticResource TertiaryBackgroundColor}"/>
+        <SolidColorBrush x:Key="BorderBrush" Color="{StaticResource BorderColor}"/>
+        <SolidColorBrush x:Key="AccentBrush" Color="{StaticResource AccentColor}"/>
+        <SolidColorBrush x:Key="SuccessBrush" Color="{StaticResource SuccessColor}"/>
+        <SolidColorBrush x:Key="WarningBrush" Color="{StaticResource WarningColor}"/>
+        <SolidColorBrush x:Key="ErrorBrush" Color="{StaticResource ErrorColor}"/>
+        <SolidColorBrush x:Key="PrimaryTextBrush" Color="{StaticResource PrimaryTextColor}"/>
+        <SolidColorBrush x:Key="SecondaryTextBrush" Color="{StaticResource SecondaryTextColor}"/>
+        <SolidColorBrush x:Key="DisabledTextBrush" Color="{StaticResource DisabledTextColor}"/>
+        
+    </Window.Resources>
+
+    <Grid RowDefinitions="Auto,*" Margin="10">
+        <TextBlock Grid.Row="0" Text="Управление складом" FontSize="20" FontWeight="Bold"
+                   Foreground="{StaticResource AccentBrush}" Margin="0,0,0,10"/>
+
+        <TabControl Grid.Row="1">
+            <!-- Вкладка "Приход товаров" -->
+            <TabItem Header="Приход товаров">
+                <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,*" Margin="5">
+                    <TextBlock Grid.Row="0" Text="Новая поставка" FontWeight="Bold" Margin="0,0,0,8"/>
+
+                    <Grid Grid.Row="1" ColumnDefinitions="Auto,*,Auto,*" Margin="0,5">
+                        <TextBlock Text="Номер накладной:" VerticalAlignment="Center" Margin="5"/>
+                        <TextBox Grid.Column="1" Text="{Binding NewInvoiceNumber}" Margin="5"/>
+                        <TextBlock Grid.Column="2" Text="Дата:" VerticalAlignment="Center" Margin="5"/>
+                        <DatePicker Grid.Column="3" SelectedDate="{Binding NewInvoiceDate}" Margin="5"/>
+                    </Grid>
+
+                    <Grid Grid.Row="2" ColumnDefinitions="Auto,*,Auto,*,Auto,*" Margin="0,5">
+                        <TextBlock Text="Поставщик:" VerticalAlignment="Center" Margin="5"/>
+                        <ComboBox Grid.Column="1" ItemsSource="{Binding Suppliers}" 
+                                  DisplayMemberBinding="{Binding name}" 
+                                  SelectedItem="{Binding SelectedSupplier}" Margin="5"/>
+                        <TextBlock Grid.Column="2" Text="Товар:" VerticalAlignment="Center" Margin="5"/>
+                        <ComboBox Grid.Column="3" ItemsSource="{Binding Products}" 
+                                  DisplayMemberBinding="{Binding name}" 
+                                  SelectedItem="{Binding SelectedProduct}" Margin="5"/>
+                        <TextBlock Grid.Column="4" Text="Количество:" VerticalAlignment="Center" Margin="5"/>
+                        <NumericUpDown Grid.Column="5" Value="{Binding Quantity}" 
+                                       Minimum="0" FormatString="F0" Margin="5"/>
+                    </Grid>
+
+                    <Grid Grid.Row="3" ColumnDefinitions="Auto,*,Auto,*" Margin="0,5">
+                        <TextBlock Text="Место хранения:" VerticalAlignment="Center" Margin="5"/>
+                        <ComboBox Grid.Column="1" ItemsSource="{Binding StorageLocations}" 
+                                  DisplayMemberBinding="{Binding location_code}" 
+                                  SelectedItem="{Binding SelectedLocation}" Margin="5"/>
+                        <TextBlock Grid.Column="2" Text="Партия/серийный номер:" VerticalAlignment="Center" Margin="5"/>
+                        <TextBox Grid.Column="3" Text="{Binding BatchNumber}" Margin="5"/>
+                    </Grid>
+
+                    <Button Grid.Row="4" Content="Добавить товар в накладную" 
+                            Command="{Binding AddToInvoiceCommand}" 
+                            HorizontalAlignment="Left" Margin="5,10"/>
+
+                    <DataGrid Grid.Row="5" ItemsSource="{Binding CurrentInvoiceItems}" Margin="5"
+                              AutoGenerateColumns="False">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Товар" Binding="{Binding ProductName}" Width="*"/>
+                            <DataGridTextColumn Header="Кол-во" Binding="{Binding Quantity}" Width="Auto"/>
+                            <DataGridTextColumn Header="Цена" Binding="{Binding UnitPrice}" Width="Auto"/>
+                            <DataGridTextColumn Header="Сумма" Binding="{Binding TotalPrice}" Width="Auto"/>
+                            <DataGridTextColumn Header="Место" Binding="{Binding LocationCode}" Width="Auto"/>
+                            <DataGridTextColumn Header="Партия" Binding="{Binding BatchNumber}" Width="Auto"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <StackPanel Grid.Row="6" Orientation="Horizontal" HorizontalAlignment="Right" Margin="5">
+                        <Button Content="Сохранить накладную" Command="{Binding SaveInvoiceCommand}" Margin="5,0"/>
+                        <Button Content="Очистить" Command="{Binding ClearInvoiceCommand}" Margin="5,0"/>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+
+            <!-- Вкладка "Инвентаризация" -->
+            <TabItem Header="Инвентаризация">
+                <Grid RowDefinitions="Auto,Auto,Auto,*" Margin="5">
+                    <TextBlock Grid.Row="0" Text="Сверка фактических остатков" FontWeight="Bold" Margin="0,0,0,8"/>
+
+                    <Grid Grid.Row="1" ColumnDefinitions="Auto,*,Auto,*,Auto,*" Margin="0,5">
+                        <TextBlock Text="Товар:" VerticalAlignment="Center" Margin="5"/>
+                        <ComboBox Grid.Column="1" ItemsSource="{Binding Products}" 
+                                  DisplayMemberBinding="{Binding name}" 
+                                  SelectedItem="{Binding SelectedProductInv}" Margin="5"/>
+                        <TextBlock Grid.Column="2" Text="Место хранения:" VerticalAlignment="Center" Margin="5"/>
+                        <ComboBox Grid.Column="3" ItemsSource="{Binding StorageLocations}" 
+                                  DisplayMemberBinding="{Binding location_code}" 
+                                  SelectedItem="{Binding SelectedLocationInv}" Margin="5"/>
+                        <TextBlock Grid.Column="4" Text="Фактическое кол-во:" VerticalAlignment="Center" Margin="5"/>
+                        <NumericUpDown Grid.Column="5" Value="{Binding ActualQuantity}" 
+                                       Minimum="0" FormatString="F0" Margin="5"/>
+                    </Grid>
+
+                    <Button Grid.Row="2" Content="Зафиксировать расхождение" 
+                            Command="{Binding RecordDiscrepancyCommand}"
+                            HorizontalAlignment="Left" Margin="5,10"/>
+
+                    <DataGrid Grid.Row="3" ItemsSource="{Binding Discrepancies}" Margin="5"
+                              AutoGenerateColumns="False">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Товар" Binding="{Binding ProductName}" Width="*"/>
+                            <DataGridTextColumn Header="Место" Binding="{Binding LocationCode}" Width="Auto"/>
+                            <DataGridTextColumn Header="Ожидаемое" Binding="{Binding ExpectedQuantity}" Width="Auto"/>
+                            <DataGridTextColumn Header="Фактическое" Binding="{Binding ActualQuantity}" Width="Auto"/>
+                            <DataGridTextColumn Header="Расхождение" Binding="{Binding Discrepancy}" Width="Auto"/>
+                            <DataGridTextColumn Header="Причина" Binding="{Binding Reason}" Width="*"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+
+            <!-- Вкладка "Списание" -->
+            <TabItem Header="Списание товаров">
+                <Grid RowDefinitions="Auto,Auto,Auto,Auto,*" Margin="5">
+                    <TextBlock Grid.Row="0" Text="Расходная накладная" FontWeight="Bold" Margin="0,0,0,8"/>
+
+                    <Grid Grid.Row="1" ColumnDefinitions="Auto,*,Auto,*" Margin="0,5">
+                        <TextBlock Text="Номер накладной:" VerticalAlignment="Center" Margin="5"/>
+                        <TextBox Grid.Column="1" Text="{Binding ExpenseInvoiceNumber}" Margin="5"/>
+                        <TextBlock Grid.Column="2" Text="Дата:" VerticalAlignment="Center" Margin="5"/>
+                        <DatePicker Grid.Column="3" SelectedDate="{Binding ExpenseInvoiceDate}" Margin="5"/>
+                    </Grid>
+
+                    <Grid Grid.Row="2" ColumnDefinitions="Auto,*,Auto,*,Auto,*" Margin="0,5">
+                        <TextBlock Text="Покупатель:" VerticalAlignment="Center" Margin="5"/>
+                        <ComboBox Grid.Column="1" ItemsSource="{Binding Customers}" 
+                                  DisplayMemberBinding="{Binding name}" 
+                                  SelectedItem="{Binding SelectedCustomer}" Margin="5"/>
+                        <TextBlock Grid.Column="2" Text="Товар:" VerticalAlignment="Center" Margin="5"/>
+                        <ComboBox Grid.Column="3" ItemsSource="{Binding Products}" 
+                                  DisplayMemberBinding="{Binding name}" 
+                                  SelectedItem="{Binding SelectedProductExp}" Margin="5"/>
+                        <TextBlock Grid.Column="4" Text="Количество:" VerticalAlignment="Center" Margin="5"/>
+                        <NumericUpDown Grid.Column="5" Value="{Binding ExpenseQuantity}" 
+                                       Minimum="0" FormatString="F0" Margin="5"/>
+                    </Grid>
+
+                    <Grid Grid.Row="3" ColumnDefinitions="Auto,*,Auto,*" Margin="0,5">
+                        <TextBlock Text="Место хранения:" VerticalAlignment="Center" Margin="5"/>
+                        <ComboBox Grid.Column="1" ItemsSource="{Binding StorageLocations}" 
+                                  DisplayMemberBinding="{Binding location_code}" 
+                                  SelectedItem="{Binding SelectedLocationExp}" Margin="5"/>
+                        <TextBlock Grid.Column="2" Text="Цена за единицу:" VerticalAlignment="Center" Margin="5"/>
+                        <NumericUpDown Grid.Column="3" Value="{Binding ExpenseUnitPrice}" 
+                                       Minimum="0" FormatString="F2" Margin="5"/>
+                    </Grid>
+
+                    <Button Grid.Row="4" Content="Добавить в накладную" 
+                            Command="{Binding AddToExpenseCommand}"
+                            HorizontalAlignment="Left" Margin="5,10"/>
+
+                    <DataGrid Grid.Row="5" ItemsSource="{Binding CurrentExpenseItems}" Margin="5"
+                              AutoGenerateColumns="False">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Товар" Binding="{Binding ProductName}" Width="*"/>
+                            <DataGridTextColumn Header="Кол-во" Binding="{Binding Quantity}" Width="Auto"/>
+                            <DataGridTextColumn Header="Цена" Binding="{Binding UnitPrice}" Width="Auto"/>
+                            <DataGridTextColumn Header="Сумма" Binding="{Binding TotalPrice}" Width="Auto"/>
+                            <DataGridTextColumn Header="Место" Binding="{Binding LocationCode}" Width="Auto"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <StackPanel Grid.Row="6" Orientation="Horizontal" HorizontalAlignment="Right" Margin="5">
+                        <Button Content="Сохранить накладную" Command="{Binding SaveExpenseCommand}" Margin="5,0"/>
+                        <Button Content="Очистить" Command="{Binding ClearExpenseCommand}" Margin="5,0"/>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Window>
