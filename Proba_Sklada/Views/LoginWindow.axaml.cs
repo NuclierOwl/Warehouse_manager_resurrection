@@ -4,6 +4,8 @@ using Proba_Sklada.Hardik.Connector;
 using Proba_Sklada.Hardik.Dao;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Extensions.DependencyInjection;
+using Proba_Sklada;
 
 namespace Inventori_Manager;
 
@@ -25,45 +27,42 @@ public partial class LoginWindow : Window
         string login = UserName.Text;
         string Password = UserPass.Text;
 
-        using (var db = new dbBaza())
+        var db = App.Services.GetRequiredService<dbBaza>();
+        List<user> users = db.users.ToList();
+        var userok = users.FirstOrDefault(u => u.username == login && u.password == Password);
+        var next = new Window();
+
+        if (userok != null)
         {
-            List<user> users = db.users.ToList();
-            var userok = users.FirstOrDefault(u => u.username == login && u.password == Password);
-            var next = new Window();
-
-            if (userok != null)
+            if (userok.is_active == true)
             {
-                if (userok.is_active == true)
+                switch (userok.role)
                 {
-                    switch (userok.role)
-                    {
-                        case ("operator"):
-                            next = new OperatorWindow(userok);
-                            next.Show();
-                            this.Close();
-                            break;
-                        case ("admin"):
-                            next = new AdminWindow();
-                            next.Show();
-                            this.Close();
-                            break;
-                        case ("manager"):
-                            next = new MenegerWindow();
-                            next.Show();
-                            this.Close();
-                            break;
-
-                    }
-                } else
-                {
-                    //var mess = 
+                    case ("operator"):
+                        next = new OperatorWindow(userok);
+                        next.Show();
+                        this.Close();
+                        break;
+                    case ("admin"):
+                        next = new AdminWindow();
+                        next.Show();
+                        this.Close();
+                        break;
+                    case ("manager"):
+                        next = new MenegerWindow();
+                        next.Show();
+                        this.Close();
+                        break;
                 }
             }
             else
             {
-                //AllNeded.Worning("¬веди логин и пароль", this);
+                //var mess =
             }
-
+        }
+        else
+        {
+            //AllNeded.Worning("¬веди логин и пароль", this);
         }
     }
 }

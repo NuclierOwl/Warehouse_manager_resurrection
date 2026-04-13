@@ -1,13 +1,15 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using MsBox.Avalonia;
+using Proba_Sklada.Hardik.Connector;
+using Proba_Sklada.Hardik.Dao;
+using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Input;
-using Microsoft.EntityFrameworkCore;
-using Proba_Sklada.Hardik.Dao;
-using Proba_Sklada.Hardik.Connector;
-using MsBox.Avalonia;
 
 namespace Inventori_Manager.ViewModels
 {
@@ -22,6 +24,8 @@ namespace Inventori_Manager.ViewModels
         public ObservableCollection<counter_ogent> Suppliers { get; set; }
         public ObservableCollection<counter_ogent> Customers { get; set; }
         public ObservableCollection<inventory> InventoryItems { get; set; }
+        public ObservableCollection<inventory> Inventory { get; set; }
+        public ObservableCollection<LocationStockModel> LocationStocks { get; set; }
         #endregion
 
         #region Приход
@@ -84,9 +88,9 @@ namespace Inventori_Manager.ViewModels
         public ICommand SaveExpenseCommand { get; }
         public ICommand ClearExpenseCommand { get; }
         #endregion
-        public InventoryViewModel(user currentUser = null)
+        public InventoryViewModel(dbBaza context, user currentUser = null)
         {
-            _context = new dbBaza(); // или через DI
+            _context = context;
             _currentUser = currentUser;
 
             Products = new ObservableCollection<product>();
@@ -94,6 +98,7 @@ namespace Inventori_Manager.ViewModels
             Suppliers = new ObservableCollection<counter_ogent>();
             Customers = new ObservableCollection<counter_ogent>();
             InventoryItems = new ObservableCollection<inventory>();
+            LocationStocks = new ObservableCollection<LocationStockModel>();
 
             CurrentInvoiceItems = new ObservableCollection<InvoiceItemModel>();
             Discrepancies = new ObservableCollection<DiscrepancyModel>();
@@ -131,6 +136,61 @@ namespace Inventori_Manager.ViewModels
             InventoryItems.Clear();
             foreach (var inv in await _context.inventories.Include(i => i.product).Include(i => i.location).ToListAsync())
                 InventoryItems.Add(inv);
+
+            RebuildLocationStocks();
+
+            Discrepancies.Clear();
+            var discrepancies = await _context.inventory_discrepancies
+                .Include(d => d.product)
+                .Include(d => d.location)
+                .OrderByDescending(d => d.id)
+                .ToListAsync();
+
+            foreach (var d in discrepancies)
+            {
+                Discrepancies.Add(new DiscrepancyModel
+                {
+                    ProductName = d.product?.name,
+                    LocationCode = d.location?.location_code,
+                    ExpectedQuantity = d.expected_quantity,
+                    ActualQuantity = d.actual_quantity,
+                    Discrepancy = d.discrepancy ?? (d.actual_quantity - d.expected_quantity),
+                    Reason = d.discrepancy_reason
+                });
+            }
+        }
+
+        private void RebuildLocationStocks()
+        {
+            LocationStocks.Clear();
+
+            var grouped = InventoryItems
+                .Where(i => i.location != null)
+                .GroupBy(i => i.location.location_code)
+                .OrderBy(g => g.Key);
+
+            foreach (var locGroup in grouped)
+            {
+                var byProduct = locGroup
+                    .Where(x => x.product != null)
+                    .GroupBy(x => x.product.name)
+                    .OrderBy(g => g.Key)
+                    .Select(g => new { Name = g.Key, Qty = g.Sum(x => x.kolichestvo) })
+                    .Where(x => x.Qty != 0)
+                    .ToList();
+
+                var sb = new StringBuilder();
+                sb.AppendLine($"Позиция: {locGroup.Key}");
+                foreach (var p in byProduct)
+                    sb.AppendLine($"{p.Name}: {p.Qty}");
+
+                LocationStocks.Add(new LocationStockModel
+                {
+                    LocationCode = locGroup.Key,
+                    TotalQuantity = locGroup.Sum(x => x.kolichestvo),
+                    TooltipText = sb.ToString().TrimEnd()
+                });
+            }
         }
 
         // ----- Приход -----
@@ -171,14 +231,21 @@ namespace Inventori_Manager.ViewModels
                         invoice_number = NewInvoiceNumber,
                         invoice_date = NewInvoiceDate.HasValue ? DateOnly.FromDateTime(NewInvoiceDate.Value.DateTime) : DateOnly.FromDateTime(DateTime.Now),
                         supplier_id = SelectedSupplier.id,
-                        status = "completed",
+                        status = "received",
                         created_by = _currentUser.id, // текущий пользователь
                         created_at = DateTime.Now,
                         updated_at = DateTime.Now
                     };
-                    _context.postuplenia.Add(invoice);
-                    _context.SaveChanges();
-
+                    try
+                    {
+                        _context.postuplenia.Add(invoice);
+                        _context.SaveChanges();
+                    }
+                    catch (Exception ex)
+                    {
+                        await MessageBoxManager.GetMessageBoxStandard("Внимание", $"У вас нет прав и {ex.ToString()}", MsBox.Avalonia.Enums.ButtonEnum.Ok).ShowAsync();
+                        throw;
+                    }
                     decimal total = 0;
                     foreach (var item in CurrentInvoiceItems)
                     {
@@ -254,7 +321,7 @@ namespace Inventori_Manager.ViewModels
             {
                 // Нет записи об остатках - не с чем сравнивать
                 var res = MessageBoxManager.GetMessageBoxStandard("Внимание", "Нет записи об остатках - не с чем сравнивать", MsBox.Avalonia.Enums.ButtonEnum.Ok).ShowAsync();
-;                return;
+                ; return;
             }
 
             int expected = inventoryItem.kolichestvo;
@@ -293,14 +360,17 @@ namespace Inventori_Manager.ViewModels
         }
 
         // ----- Списание -----
-        private void AddToExpense()
+        private async void AddToExpense()
         {
             if (SelectedProductExp == null || SelectedLocationExp == null || ExpenseQuantity <= 0 || ExpenseUnitPrice <= 0)
                 return;
 
             var inventoryItem = InventoryItems.FirstOrDefault(i => i.product_id == SelectedProductExp.id && i.location_id == SelectedLocationExp.id);
             if (inventoryItem == null || inventoryItem.kolichestvo < (int)ExpenseQuantity)
+            {
+                await MessageBoxManager.GetMessageBoxStandard("Ошибка при сохранении расходной накладной", "Этот товар закончился", MsBox.Avalonia.Enums.ButtonEnum.Ok).ShowAsync();
                 return;
+            }
 
             CurrentExpenseItems.Add(new ExpenseItemModel
             {
@@ -321,7 +391,8 @@ namespace Inventori_Manager.ViewModels
 
         private async void SaveExpense()
         {
-            if (string.IsNullOrWhiteSpace(ExpenseInvoiceNumber) || SelectedCustomer == null || CurrentExpenseItems.Count == 0)
+            var ran = new Random();
+            if (SelectedCustomer == null || CurrentExpenseItems.Count == 0)
                 return;
 
             using (var transaction = await _context.Database.BeginTransactionAsync())
@@ -330,7 +401,7 @@ namespace Inventori_Manager.ViewModels
                 {
                     var invoice = new schet_faktura
                     {
-                        invoice_number = ExpenseInvoiceNumber,
+                        invoice_number = ExpenseInvoiceNumber ?? ran.Next(100000000,999999999).ToString(),
                         invoice_date = ExpenseInvoiceDate.HasValue ? DateOnly.FromDateTime(ExpenseInvoiceDate.Value.DateTime) : DateOnly.FromDateTime(DateTime.Now),
                         customer_id = SelectedCustomer.id,
                         status = "completed",
@@ -378,7 +449,7 @@ namespace Inventori_Manager.ViewModels
                 catch (Exception ex)
                 {
                     await transaction.RollbackAsync();
-                    MessageBoxManager.GetMessageBoxStandard("Ошибка при сохранении расходной накладной",ex.ToString(),MsBox.Avalonia.Enums.ButtonEnum.Ok);
+                    MessageBoxManager.GetMessageBoxStandard("Ошибка при сохранении расходной накладной", ex.ToString(), MsBox.Avalonia.Enums.ButtonEnum.Ok);
                     throw;
                 }
             }
@@ -393,6 +464,21 @@ namespace Inventori_Manager.ViewModels
         }
 
         #region Вспомогательные модели
+        public class LocationStockModel : INotifyPropertyChanged
+        {
+            private string _locationCode;
+            private int _totalQuantity;
+            private string _tooltipText;
+
+            public string LocationCode { get => _locationCode; set { _locationCode = value; OnPropertyChanged(); } }
+            public int TotalQuantity { get => _totalQuantity; set { _totalQuantity = value; OnPropertyChanged(); } }
+            public string TooltipText { get => _tooltipText; set { _tooltipText = value; OnPropertyChanged(); } }
+
+            public event PropertyChangedEventHandler PropertyChanged;
+            protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null) =>
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
         public class InvoiceItemModel : INotifyPropertyChanged
         {
             public int ProductId { get; set; }

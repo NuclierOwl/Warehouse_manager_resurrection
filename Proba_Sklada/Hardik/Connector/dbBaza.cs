@@ -49,8 +49,19 @@ public partial class dbBaza : DbContext
     public virtual DbSet<vnutrinie_movement> vnutrinie_movements { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseNpgsql("Server=localhost:5432;User Id=simp;Password=1234;Database=bazaV5");
+    {
+        // Prefer DI (AddDbContext). Fallback to environment variable for legacy/new() call sites.
+        if (optionsBuilder.IsConfigured) return;
+
+        var cs = Environment.GetEnvironmentVariable("ConnectionStrings__dbBaza")
+                 ?? Environment.GetEnvironmentVariable("DBBAZA_CONNECTION");
+
+        if (string.IsNullOrWhiteSpace(cs))
+            throw new InvalidOperationException(
+                "Database is not configured. Configure DI (AddDbContext<dbBaza>) or set environment variable 'ConnectionStrings__dbBaza'.");
+
+        optionsBuilder.UseNpgsql(cs);
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

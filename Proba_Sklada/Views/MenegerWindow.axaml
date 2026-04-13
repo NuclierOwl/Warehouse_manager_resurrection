@@ -2,18 +2,21 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.Avalonia;assembly=LiveChartsCore.SkiaSharpView.Avalonia"
+        xmlns:vm="clr-namespace:Inventori_Manager.ViewModels"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="Inventori_Manager.MenegerWindow"
+        x:DataType="vm:MenegerViewModel"
         Title="MenegerWindow">
 <StackPanel>
       <DockPanel>
           <ComboBox Name="ComboFilter" SelectionChanged="SelectionChanged">
-              <ComboBoxItem>Âñå</ComboBoxItem>
-              <ComboBoxItem>Ïî óáûâàíèþ</ComboBoxItem>
-              <ComboBoxItem>Ïî âîçðàñòàíèþ</ComboBoxItem>
+              <ComboBoxItem>˜˜˜</ComboBoxItem>
+              <ComboBoxItem>˜˜ ˜˜˜˜˜˜˜˜</ComboBoxItem>
+              <ComboBoxItem>˜˜ ˜˜˜˜˜˜˜˜˜˜˜</ComboBoxItem>
           </ComboBox>
 
-          <TextBox Name="SerchBox" Watermark="Ïîèñê" TextChanged="TextChanged"/>
+          <TextBox Name="SerchBox" Watermark="˜˜˜˜˜" TextChanged="TextChanged"/>
       </DockPanel>
   
       <TabControl>
@@ -21,7 +24,34 @@
 
           </TabItem>
           <TabItem Header="Stat">
+              <Grid RowDefinitions="Auto,*" Margin="12">
+                  <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
+                      <StackPanel>
+                          <TextBlock Text="˜˜˜˜˜˜ ˜" Margin="0,0,0,4"/>
+                          <DatePicker SelectedDate="{Binding StartDate}" Width="160"/>
+                      </StackPanel>
+                      <StackPanel>
+                          <TextBlock Text="˜˜" Margin="0,0,0,4"/>
+                          <DatePicker SelectedDate="{Binding EndDate}" Width="160"/>
+                      </StackPanel>
+                      <StackPanel>
+                          <TextBlock Text="˜˜˜˜˜˜˜˜˜˜˜" Margin="0,0,0,4"/>
+                          <ComboBox ItemsSource="{Binding GroupingOptions}"
+                                    SelectedItem="{Binding SelectedGrouping}"
+                                    Width="160"/>
+                      </StackPanel>
+                  </StackPanel>
 
+                  <Border Grid.Row="1" Margin="0,12,0,0" CornerRadius="8" BorderThickness="1" BorderBrush="{DynamicResource ThemeBorderLowBrush}">
+                      <Grid RowDefinitions="Auto,*" Margin="12">
+                          <TextBlock Grid.Row="0" Text="˜˜˜˜˜˜˜˜˜ / ˜˜˜˜˜˜˜˜˜" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                          <lvc:CartesianChart Grid.Row="1"
+                                             Series="{Binding MovementSeries}"
+                                             XAxes="{Binding XAxes}"
+                                             YAxes="{Binding YAxes}"/>
+                      </Grid>
+                  </Border>
+              </Grid>
           </TabItem>
       </TabControl>
   </StackPanel>

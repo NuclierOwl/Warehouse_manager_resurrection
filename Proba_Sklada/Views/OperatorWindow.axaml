@@ -196,6 +196,32 @@
                     </StackPanel>
                 </Grid>
             </TabItem>
+
+            <!-- Вкладка "Позиции" -->
+            <TabItem Header="Позиции">
+                <Grid RowDefinitions="Auto,*" Margin="5">
+                    <TextBlock Grid.Row="0"
+                               Text="Наведи курсор на позицию, чтобы увидеть что и сколько хранится"
+                               FontWeight="Bold"
+                               Margin="0,0,0,8"/>
+
+                    <DataGrid Grid.Row="1"
+                              ItemsSource="{Binding LocationStocks}"
+                              AutoGenerateColumns="False"
+                              IsReadOnly="True"
+                              Margin="5">
+                        <DataGrid.Styles>
+                            <Style Selector="DataGridRow" x:DataType="vm:InventoryViewModel+LocationStockModel">
+                                <Setter Property="ToolTip.Tip" Value="{Binding TooltipText}"/>
+                            </Style>
+                        </DataGrid.Styles>
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Позиция" Binding="{Binding LocationCode}" Width="*"/>
+                            <DataGridTextColumn Header="Всего, шт." Binding="{Binding TotalQuantity}" Width="Auto"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
         </TabControl>
     </Grid>
 </Window>

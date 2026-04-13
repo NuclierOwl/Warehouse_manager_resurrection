@@ -1,8 +1,11 @@
 using Avalonia.Controls;
 using Inventori_Manager.ViewModels;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Proba_Sklada;
 using Proba_Sklada.Hardik.Connector;
 using Proba_Sklada.Hardik.Dao;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -15,7 +18,7 @@ namespace Inventori_Manager
         {
             InitializeComponent();
             //FioBox.Text = "Гость";
-            DataContext = new InventoryViewModel();
+            DataContext = new InventoryViewModel(App.Services.GetRequiredService<dbBaza>());
             Get();
         }
         public OperatorWindow(user us)
@@ -23,15 +26,29 @@ namespace Inventori_Manager
             InitializeComponent();
             //FioBox.Text = $"{us.username}";
             _user = us;
-            DataContext = new InventoryViewModel(us);
+            DataContext = new InventoryViewModel(App.Services.GetRequiredService<dbBaza>(), us);
             Get();
         }
 
         private void Get()
         {
-            using (var db = new dbBaza())
+            var db = App.Services.GetRequiredService<dbBaza>();
+            List<inventory> inv = db.inventories.Include(e => e.location).Include(e => e.product).ToList();
+
+            // InvBox.ItemsSource = inv;
+        }
+
+        private void Cheaker()
+        {
+            var db = App.Services.GetRequiredService<dbBaza>();
+            List<inventory> inv = db.inventories.Include(e => e.location).Include(e => e.product).ToList();
+
+            foreach (var d in inv)
             {
-                List<inventory> inv = db.inventories.Include(e => e.location).Include(e => e.product).ToList();
+                if (d.last_updated < DateTime.Now.AddMonths(-1) && d.kolichestvo == 0)
+                {
+                    db.inventories.Remove(d);
+                }
             }
         }
     }

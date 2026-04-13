@@ -9,12 +9,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
+using Proba_Sklada;
 
 namespace Inventori_Manager;
 
 public partial class AdminWindow : Window
 {
-    // Словарь для отслеживания измененных пользователей
+    //     
     private Dictionary<int, user> modifiedUsers = new Dictionary<int, user>();
 
     public AdminWindow()
@@ -41,64 +43,58 @@ public partial class AdminWindow : Window
 
     private void Get()
     {
-        using (var db = new dbBaza())
+        var db = App.Services.GetRequiredService<dbBaza>();
+        List<user> allUsers = db.users.ToList();
+
+        if (SerchBox != null && !string.IsNullOrEmpty(SerchBox.Text))
         {
-            List<user> allUsers = db.users.ToList();
-
-            if (SerchBox != null && !string.IsNullOrEmpty(SerchBox.Text))
-            {
-                allUsers = allUsers.Where(u =>
-                    u.full_name.Contains(SerchBox.Text) ||
-                    u.username.Contains(SerchBox.Text) ||
-                    u.email.Contains(SerchBox.Text)).ToList();
-            }
-
-            switch (ComboFilter.SelectedIndex)
-            {
-                case 0:
-                    break;
-                case 1:
-                    allUsers = allUsers.OrderByDescending(x => x.username).ToList();
-                    break;
-                case 2:
-                    allUsers = allUsers.OrderBy(x => x.username).ToList();
-                    break;
-                default:
-                    break;
-            }
-
-            AllUsersBox.ItemsSource = allUsers;
+            allUsers = allUsers.Where(u =>
+                u.full_name.Contains(SerchBox.Text) ||
+                u.username.Contains(SerchBox.Text) ||
+                u.email.Contains(SerchBox.Text)).ToList();
         }
+
+        switch (ComboFilter.SelectedIndex)
+        {
+            case 0:
+                break;
+            case 1:
+                allUsers = allUsers.OrderByDescending(x => x.username).ToList();
+                break;
+            case 2:
+                allUsers = allUsers.OrderBy(x => x.username).ToList();
+                break;
+            default:
+                break;
+        }
+
+        AllUsersBox.ItemsSource = allUsers;
     }
 
     private void LoadUsersForEditing()
     {
-        using (var db = new dbBaza())
-        {
-            var users = db.users.ToList();
-            UsersListBox.ItemsSource = users;
-        }
+        var db = App.Services.GetRequiredService<dbBaza>();
+        var users = db.users.ToList();
+        UsersListBox.ItemsSource = users;
     }
 
-    // Обработчик изменения роли в Control Manager
+    //     Control Manager
     private void RoleComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         if (sender is ComboBox comboBox && comboBox.DataContext is user selectedUser)
         {
-            using (var db = new dbBaza())
+            var db = App.Services.GetRequiredService<dbBaza>();
+            var userToUpdate = db.users.FirstOrDefault(u => u.id == selectedUser.id);
+            if (userToUpdate != null)
             {
-                var userToUpdate = db.users.FirstOrDefault(u => u.id == selectedUser.id);
-                if (userToUpdate != null)
-                {
-                    userToUpdate.role = comboBox.SelectedItem?.ToString();
-                    db.SaveChanges();
+                userToUpdate.role = comboBox.SelectedItem?.ToString();
+                db.SaveChanges();
 
-                    // Обновляем список в Control Manager
-                    Get();
+                //    Control Manager
+                Get();
 
-                    // Показываем уведомление об успешном изменении
-                    ShowNotification($"Роль пользователя {selectedUser.full_name} изменена на {userToUpdate.role}");
-                }
+                //     
+                ShowNotification($"  {selectedUser.full_name}   {userToUpdate.role}");
             }
         }
     }
@@ -115,62 +111,58 @@ public partial class AdminWindow : Window
             is_active = true
         };
 
-        using (var db = new dbBaza())
-        {
-            db.users.Add(newUser);
-            db.SaveChanges();
+        var db = App.Services.GetRequiredService<dbBaza>();
+        db.users.Add(newUser);
+        db.SaveChanges();
 
-            LoadUsersForEditing();
+        LoadUsersForEditing();
 
-            await ShowNotificationDialog("Новый пользователь добавлен. Пароль по умолчанию: 123456");
-        }
+        await ShowNotificationDialog("  .   : 123456");
     }
 
     private async void SaveUserButton_Click(object sender, RoutedEventArgs e)
     {
         if (sender is Button button && button.Tag is int userId)
         {
-            using (var db = new dbBaza())
+            var db = App.Services.GetRequiredService<dbBaza>();
+            var userToUpdate = db.users.FirstOrDefault(u => u.id == userId);
+            if (userToUpdate != null)
             {
-                var userToUpdate = db.users.FirstOrDefault(u => u.id == userId);
-                if (userToUpdate != null)
+                //    ListBox
+                if (UsersListBox.Items is IEnumerable<user> users)
                 {
-                    // Находим элемент в ListBox
-                    if (UsersListBox.Items is IEnumerable<user> users)
+                    var editedUser = users.FirstOrDefault(u => u.id == userId);
+                    if (editedUser != null)
                     {
-                        var editedUser = users.FirstOrDefault(u => u.id == userId);
-                        if (editedUser != null)
-                        {
-                            // Обновляем данные
-                            userToUpdate.username = editedUser.username;
-                            userToUpdate.full_name = editedUser.full_name;
-                            userToUpdate.email = editedUser.email;
-                            userToUpdate.role = editedUser.role;
-                            userToUpdate.is_active = editedUser.is_active;
+                        //  
+                        userToUpdate.username = editedUser.username;
+                        userToUpdate.full_name = editedUser.full_name;
+                        userToUpdate.email = editedUser.email;
+                        userToUpdate.role = editedUser.role;
+                        userToUpdate.is_active = editedUser.is_active;
 
-                            db.SaveChanges();
+                        db.SaveChanges();
 
-                            // Обновляем оба списка
-                            Get();
-                            LoadUsersForEditing();
+                        //   
+                        Get();
+                        LoadUsersForEditing();
 
-                            await ShowNotificationDialog($"Пользователь {editedUser.full_name} успешно обновлен");
-                        }
+                        await ShowNotificationDialog($" {editedUser.full_name}  ");
                     }
                 }
             }
         }
     }
 
-    // Обработчик удаления пользователя
+    //   
     private async void DeleteUserButton_Click(object sender, RoutedEventArgs e)
     {
         if (sender is Button button && button.Tag is int userId)
         {
-            // Подтверждение удаления
+            //  
             var dialog = new Window()
             {
-                Title = "Подтверждение удаления",
+                Title = " ",
                 Width = 300,
                 Height = 150,
                 WindowStartupLocation = WindowStartupLocation.CenterOwner
@@ -184,7 +176,7 @@ public partial class AdminWindow : Window
 
             panel.Children.Add(new TextBlock
             {
-                Text = "Вы уверены, что хотите удалить этого пользователя?",
+                Text = " ,     ?",
                 TextWrapping = TextWrapping.Wrap
             });
 
@@ -195,38 +187,36 @@ public partial class AdminWindow : Window
                 Spacing = 10
             };
 
-            var yesButton = new Button { Content = "Да", Width = 80 };
-            var noButton = new Button { Content = "Нет", Width = 80 };
+            var yesButton = new Button { Content = "", Width = 80 };
+            var noButton = new Button { Content = "", Width = 80 };
 
             yesButton.Click += async (s, args) =>
             {
-                using (var db = new dbBaza())
+                var db = App.Services.GetRequiredService<dbBaza>();
+                var userToDelete = db.users.FirstOrDefault(u => u.id == userId);
+                if (userToDelete != null)
                 {
-                    var userToDelete = db.users.FirstOrDefault(u => u.id == userId);
-                    if (userToDelete != null)
+                    // ,      
+                    if (userToDelete.role == "admin")
                     {
-                        // Проверяем, не является ли это последним администратором
-                        if (userToDelete.role == "admin")
+                        var adminCount = db.users.Count(u => u.role == "admin");
+                        if (adminCount <= 1)
                         {
-                            var adminCount = db.users.Count(u => u.role == "admin");
-                            if (adminCount <= 1)
-                            {
-                                await ShowNotificationDialog("Невозможно удалить последнего администратора!");
-                                dialog.Close();
-                                return;
-                            }
+                            await ShowNotificationDialog("   !");
+                            dialog.Close();
+                            return;
                         }
-
-                        db.users.Remove(userToDelete);
-                        db.SaveChanges();
-
-                        // Обновляем оба списка
-                        Get();
-                        LoadUsersForEditing();
-
-                        await ShowNotificationDialog($"Пользователь {userToDelete.full_name} удален");
-                        dialog.Close();
                     }
+
+                    db.users.Remove(userToDelete);
+                    db.SaveChanges();
+
+                    //   
+                    Get();
+                    LoadUsersForEditing();
+
+                    await ShowNotificationDialog($" {userToDelete.full_name} ");
+                    dialog.Close();
                 }
             };
 
@@ -241,28 +231,28 @@ public partial class AdminWindow : Window
         }
     }
 
-    // Обработчик обновления списка
+    //   
     private void RefreshButton_Click(object sender, RoutedEventArgs e)
     {
         Get();
         LoadUsersForEditing();
     }
 
-    // Вспомогательный метод для хеширования пароля
+    //     
     private string HashPassword(string password)
     {
-        // В реальном приложении используйте безопасное хеширование
-        // Например: BCrypt.Net.BCrypt.HashPassword(password);
-        // Для простоты используем базовое преобразование
+        //      
+        // : BCrypt.Net.BCrypt.HashPassword(password);
+        //     
         return Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(password));
     }
 
-    // Метод для отображения уведомлений в диалоговом окне
+    //       
     private async Task ShowNotificationDialog(string message)
     {
         var dialog = new Window()
         {
-            Title = "Уведомление",
+            Title = "",
             Width = 400,
             Height = 100,
             WindowStartupLocation = WindowStartupLocation.CenterOwner
