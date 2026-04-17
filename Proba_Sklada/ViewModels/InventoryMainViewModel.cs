@@ -8,7 +8,6 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace Inventori_Manager.ViewModels
@@ -38,18 +37,8 @@ namespace Inventori_Manager.ViewModels
         private string _batchNumber;
         private ObservableCollection<InvoiceItemModel> _currentInvoiceItems;
 
-        private string _currentDate;
-        public string CurrentDate
-        {
-            get => _currentDate;
-            set { _currentDate = value; OnPropertyChanged(); }
-        }
 
-        
-
-
-
-public string NewInvoiceNumber { get => _newInvoiceNumber; set { _newInvoiceNumber = value; OnPropertyChanged(); } }
+        public string NewInvoiceNumber { get => _newInvoiceNumber; set { _newInvoiceNumber = value; OnPropertyChanged(); } }
         public DateTimeOffset? NewInvoiceDate { get => _newInvoiceDate; set { _newInvoiceDate = value; OnPropertyChanged(); } }
         public counter_ogent SelectedSupplier { get => _selectedSupplier; set { _selectedSupplier = value; OnPropertyChanged(); } }
         public product SelectedProduct { get => _selectedProduct; set { _selectedProduct = value; OnPropertyChanged(); } }
@@ -124,17 +113,6 @@ public string NewInvoiceNumber { get => _newInvoiceNumber; set { _newInvoiceNumb
             ClearExpenseCommand = new RelayCommand(ClearExpense);
 
             LoadData();
-
-            var timer = new System.Timers.Timer(1000);
-            timer.Elapsed += (s, e) =>
-            {
-                Avalonia.Threading.Dispatcher.UIThread.Post(() =>
-                {
-                    CurrentDate = DateTime.Now.ToString("dd.MM.yyyy HH:mm");
-                });
-            };
-            timer.Start();
-            CurrentDate = DateTime.Now.ToString("dd.MM.yyyy HH:mm");
         }
 
         private async void LoadData()
@@ -423,7 +401,7 @@ public string NewInvoiceNumber { get => _newInvoiceNumber; set { _newInvoiceNumb
                 {
                     var invoice = new schet_faktura
                     {
-                        invoice_number = ExpenseInvoiceNumber ?? ran.Next(100000000,999999999).ToString(),
+                        invoice_number = ExpenseInvoiceNumber ?? ran.Next(100000000, 999999999).ToString(),
                         invoice_date = ExpenseInvoiceDate.HasValue ? DateOnly.FromDateTime(ExpenseInvoiceDate.Value.DateTime) : DateOnly.FromDateTime(DateTime.Now),
                         customer_id = SelectedCustomer.id,
                         status = "completed",

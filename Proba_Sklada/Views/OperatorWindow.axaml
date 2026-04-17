@@ -389,16 +389,5 @@
                 </TabItem>
             </TabControl>
         </Border>
-
-        <!-- Нижняя статусная строка -->
-        <Border DockPanel.Dock="Bottom" Background="{StaticResource SecondaryBackground}" 
-                BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,1,0,0"
-                Padding="20,8">
-            <Grid ColumnDefinitions="*,Auto">
-                <TextBlock Text="✅ Система готова к работе" Foreground="{StaticResource SecondaryTextBrush}" FontSize="12"/>
-                <TextBlock Grid.Column="1" Text="{Binding CurrentDate, StringFormat='{}{0:dd.MM.yyyy HH:mm}'}" 
-                           Foreground="{StaticResource SecondaryTextBrush}" FontSize="12"/>
-            </Grid>
-        </Border>
     </DockPanel>
 </Window>
