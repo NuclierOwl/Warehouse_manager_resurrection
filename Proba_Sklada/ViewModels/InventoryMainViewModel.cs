@@ -38,7 +38,18 @@ namespace Inventori_Manager.ViewModels
         private string _batchNumber;
         private ObservableCollection<InvoiceItemModel> _currentInvoiceItems;
 
-        public string NewInvoiceNumber { get => _newInvoiceNumber; set { _newInvoiceNumber = value; OnPropertyChanged(); } }
+        private string _currentDate;
+        public string CurrentDate
+        {
+            get => _currentDate;
+            set { _currentDate = value; OnPropertyChanged(); }
+        }
+
+        
+
+
+
+public string NewInvoiceNumber { get => _newInvoiceNumber; set { _newInvoiceNumber = value; OnPropertyChanged(); } }
         public DateTimeOffset? NewInvoiceDate { get => _newInvoiceDate; set { _newInvoiceDate = value; OnPropertyChanged(); } }
         public counter_ogent SelectedSupplier { get => _selectedSupplier; set { _selectedSupplier = value; OnPropertyChanged(); } }
         public product SelectedProduct { get => _selectedProduct; set { _selectedProduct = value; OnPropertyChanged(); } }
@@ -113,6 +124,17 @@ namespace Inventori_Manager.ViewModels
             ClearExpenseCommand = new RelayCommand(ClearExpense);
 
             LoadData();
+
+            var timer = new System.Timers.Timer(1000);
+            timer.Elapsed += (s, e) =>
+            {
+                Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+                {
+                    CurrentDate = DateTime.Now.ToString("dd.MM.yyyy HH:mm");
+                });
+            };
+            timer.Start();
+            CurrentDate = DateTime.Now.ToString("dd.MM.yyyy HH:mm");
         }
 
         private async void LoadData()
