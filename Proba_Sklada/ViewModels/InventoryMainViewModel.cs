@@ -8,7 +8,6 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace Inventori_Manager.ViewModels
@@ -115,36 +114,36 @@ namespace Inventori_Manager.ViewModels
             LoadData();
         }
 
-        private async void LoadData()
+        private void LoadData()
         {
             Products.Clear();
-            foreach (var p in await _context.products.Where(p => p.is_active == true).ToListAsync())
+            foreach (var p in _context.products.Where(p => p.is_active == true).ToList())
                 Products.Add(p);
 
             StorageLocations.Clear();
-            foreach (var loc in await _context.storage_locations.ToListAsync())
+            foreach (var loc in _context.storage_locations.ToList())
                 StorageLocations.Add(loc);
 
             Suppliers.Clear();
-            foreach (var sup in await _context.counter_ogents.Where(c => c.type == "supplier" && c.is_active == true).ToListAsync())
+            foreach (var sup in _context.counter_ogents.Where(c => c.type == "supplier" && c.is_active == true).ToList())
                 Suppliers.Add(sup);
 
             Customers.Clear();
-            foreach (var cust in await _context.counter_ogents.Where(c => c.type == "customer" && c.is_active == true).ToListAsync())
+            foreach (var cust in _context.counter_ogents.Where(c => c.type == "customer" && c.is_active == true).ToList())
                 Customers.Add(cust);
 
             InventoryItems.Clear();
-            foreach (var inv in await _context.inventories.Include(i => i.product).Include(i => i.location).ToListAsync())
+            foreach (var inv in _context.inventories.Include(i => i.product).Include(i => i.location).ToList())
                 InventoryItems.Add(inv);
 
             RebuildLocationStocks();
 
             Discrepancies.Clear();
-            var discrepancies = await _context.inventory_discrepancies
+            var discrepancies = _context.inventory_discrepancies
                 .Include(d => d.product)
                 .Include(d => d.location)
                 .OrderByDescending(d => d.id)
-                .ToListAsync();
+                .ToList();
 
             foreach (var d in discrepancies)
             {
@@ -217,12 +216,12 @@ namespace Inventori_Manager.ViewModels
             BatchNumber = null;
         }
 
-        private async void SaveInvoice()
+        private void SaveInvoice()
         {
             if (string.IsNullOrWhiteSpace(NewInvoiceNumber) || SelectedSupplier == null || CurrentInvoiceItems.Count == 0)
                 return;
 
-            using (var transaction = await _context.Database.BeginTransactionAsync())
+            using (var transaction = _context.Database.BeginTransaction())
             {
                 try
                 {
@@ -243,7 +242,11 @@ namespace Inventori_Manager.ViewModels
                     }
                     catch (Exception ex)
                     {
-                        await MessageBoxManager.GetMessageBoxStandard("Внимание", $"У вас нет прав и {ex.ToString()}", MsBox.Avalonia.Enums.ButtonEnum.Ok).ShowAsync();
+                        MessageBoxManager
+                            .GetMessageBoxStandard("Внимание", $"У вас нет прав и {ex}", MsBox.Avalonia.Enums.ButtonEnum.Ok)
+                            .ShowAsync()
+                            .GetAwaiter()
+                            .GetResult();
                         throw;
                     }
                     decimal total = 0;
@@ -261,9 +264,9 @@ namespace Inventori_Manager.ViewModels
                         };
                         _context.postuplenia_items.Add(postItem);
 
-                        var inventoryItem = await _context.inventories
-                            .FirstOrDefaultAsync(i => i.product_id == item.ProductId && i.location_id == item.LocationId &&
-                                                       i.batch_number == item.BatchNumber);
+                        var inventoryItem = _context.inventories
+                            .FirstOrDefault(i => i.product_id == item.ProductId && i.location_id == item.LocationId &&
+                                                 i.batch_number == item.BatchNumber);
                         if (inventoryItem == null)
                         {
                             inventoryItem = new inventory
@@ -286,15 +289,15 @@ namespace Inventori_Manager.ViewModels
                     }
 
                     invoice.total_amount = total;
-                    await _context.SaveChangesAsync();
-                    await transaction.CommitAsync();
+                    _context.SaveChanges();
+                    transaction.Commit();
 
                     LoadData();
                     ClearInvoice();
                 }
                 catch
                 {
-                    await transaction.RollbackAsync();
+                    transaction.Rollback();
                     throw;
                 }
             }
@@ -309,19 +312,23 @@ namespace Inventori_Manager.ViewModels
         }
 
         // ----- Инвентаризация -----
-        private async void RecordDiscrepancy()
+        private void RecordDiscrepancy()
         {
             if (SelectedProductInv == null || SelectedLocationInv == null || ActualQuantity < 0)
                 return;
 
-            var inventoryItem = await _context.inventories
-                .FirstOrDefaultAsync(i => i.product_id == SelectedProductInv.id && i.location_id == SelectedLocationInv.id);
+            var inventoryItem = _context.inventories
+                .FirstOrDefault(i => i.product_id == SelectedProductInv.id && i.location_id == SelectedLocationInv.id);
 
             if (inventoryItem == null)
             {
                 // Нет записи об остатках - не с чем сравнивать
-                var res = MessageBoxManager.GetMessageBoxStandard("Внимание", "Нет записи об остатках - не с чем сравнивать", MsBox.Avalonia.Enums.ButtonEnum.Ok).ShowAsync();
-                ; return;
+                MessageBoxManager
+                    .GetMessageBoxStandard("Внимание", "Нет записи об остатках - не с чем сравнивать", MsBox.Avalonia.Enums.ButtonEnum.Ok)
+                    .ShowAsync()
+                    .GetAwaiter()
+                    .GetResult();
+                return;
             }
 
             int expected = inventoryItem.kolichestvo;
@@ -342,7 +349,7 @@ namespace Inventori_Manager.ViewModels
                 resolved = false,
             };
             _context.inventory_discrepancies.Add(discrepancy);
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
 
             Discrepancies.Add(new DiscrepancyModel
             {
@@ -360,7 +367,7 @@ namespace Inventori_Manager.ViewModels
         }
 
         // ----- Списание -----
-        private async void AddToExpense()
+        private void AddToExpense()
         {
             if (SelectedProductExp == null || SelectedLocationExp == null || ExpenseQuantity <= 0 || ExpenseUnitPrice <= 0)
                 return;
@@ -368,7 +375,11 @@ namespace Inventori_Manager.ViewModels
             var inventoryItem = InventoryItems.FirstOrDefault(i => i.product_id == SelectedProductExp.id && i.location_id == SelectedLocationExp.id);
             if (inventoryItem == null || inventoryItem.kolichestvo < (int)ExpenseQuantity)
             {
-                await MessageBoxManager.GetMessageBoxStandard("Ошибка при сохранении расходной накладной", "Этот товар закончился", MsBox.Avalonia.Enums.ButtonEnum.Ok).ShowAsync();
+                MessageBoxManager
+                    .GetMessageBoxStandard("Ошибка при сохранении расходной накладной", "Этот товар закончился", MsBox.Avalonia.Enums.ButtonEnum.Ok)
+                    .ShowAsync()
+                    .GetAwaiter()
+                    .GetResult();
                 return;
             }
 
@@ -389,13 +400,13 @@ namespace Inventori_Manager.ViewModels
             ExpenseUnitPrice = 0;
         }
 
-        private async void SaveExpense()
+        private void SaveExpense()
         {
             var ran = new Random();
             if (SelectedCustomer == null || CurrentExpenseItems.Count == 0)
                 return;
 
-            using (var transaction = await _context.Database.BeginTransactionAsync())
+            using (var transaction = _context.Database.BeginTransaction())
             {
                 try
                 {
@@ -410,7 +421,7 @@ namespace Inventori_Manager.ViewModels
                         updated_at = DateTime.Now
                     };
                     _context.schet_fakturas.Add(invoice);
-                    await _context.SaveChangesAsync();
+                    _context.SaveChanges();
 
                     decimal total = 0;
                     foreach (var item in CurrentExpenseItems)
@@ -428,8 +439,8 @@ namespace Inventori_Manager.ViewModels
                         };
                         _context.schet_faktura_soderzanies.Add(expenseItem);
 
-                        var inventoryItem = await _context.inventories
-                            .FirstOrDefaultAsync(i => i.product_id == item.ProductId && i.location_id == item.LocationId);
+                        var inventoryItem = _context.inventories
+                            .FirstOrDefault(i => i.product_id == item.ProductId && i.location_id == item.LocationId);
                         if (inventoryItem != null)
                         {
                             inventoryItem.kolichestvo -= (int)item.Quantity;
@@ -440,16 +451,20 @@ namespace Inventori_Manager.ViewModels
                     }
 
                     invoice.total_amount = total;
-                    await _context.SaveChangesAsync();
-                    await transaction.CommitAsync();
+                    _context.SaveChanges();
+                    transaction.Commit();
 
                     LoadData();
                     ClearExpense();
                 }
                 catch (Exception ex)
                 {
-                    await transaction.RollbackAsync();
-                    MessageBoxManager.GetMessageBoxStandard("Ошибка при сохранении расходной накладной", ex.ToString(), MsBox.Avalonia.Enums.ButtonEnum.Ok);
+                    transaction.Rollback();
+                    MessageBoxManager
+                        .GetMessageBoxStandard("Ошибка при сохранении расходной накладной", ex.ToString(), MsBox.Avalonia.Enums.ButtonEnum.Ok)
+                        .ShowAsync()
+                        .GetAwaiter()
+                        .GetResult();
                     throw;
                 }
             }

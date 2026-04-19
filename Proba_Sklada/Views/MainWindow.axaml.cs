@@ -85,7 +85,7 @@ public partial class MainWindow : Window
         }
     }
 
-    private async void SaveItemKolichestvo(inventory item)
+    private void SaveItemKolichestvo(inventory item)
     {
         using (var db = new dbBaza())
         {
@@ -93,17 +93,17 @@ public partial class MainWindow : Window
             if (exo != null)
             {
                 exo.kolichestvo = item.kolichestvo;
-                await db.SaveChangesAsync();
+                db.SaveChanges();
                 Get();
             }
 
         }
     }
 
-    private async void Add_New_Click(object o, RoutedEventArgs e)
+    private void Add_New_Click(object o, RoutedEventArgs e)
     {
         var addWindow = new AddItemWindow();
-        var result = await addWindow.ShowDialog<bool>(this);
+        var result = addWindow.ShowDialog<bool>(this).GetAwaiter().GetResult();
         if (result)
         {
             using (var db = new dbBaza())

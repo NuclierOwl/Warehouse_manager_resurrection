@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace Inventori_Manager.ViewModels;
 
@@ -47,14 +46,14 @@ public partial class MenegerViewModel : ObservableObject
     public MenegerViewModel(dbBaza context)
     {
         _context = context;
-        _ = RefreshAsync();
+        Refresh();
     }
 
-    partial void OnSelectedGroupingChanged(StatsGrouping value) => _ = RefreshAsync();
-    partial void OnStartDateChanged(DateTimeOffset? value) => _ = RefreshAsync();
-    partial void OnEndDateChanged(DateTimeOffset? value) => _ = RefreshAsync();
+    partial void OnSelectedGroupingChanged(StatsGrouping value) => Refresh();
+    partial void OnStartDateChanged(DateTimeOffset? value) => Refresh();
+    partial void OnEndDateChanged(DateTimeOffset? value) => Refresh();
 
-    public async Task RefreshAsync()
+    public void Refresh()
     {
         var startDt = (StartDate ?? DateTimeOffset.Now.Date).Date;
         var endDt = (EndDate ?? DateTimeOffset.Now.Date).Date;
@@ -66,17 +65,17 @@ public partial class MenegerViewModel : ObservableObject
             (start, end) = (end, start);
         }
 
-        var incomingRaw = await _context.postuplenia_items
+        var incomingRaw = _context.postuplenia_items
             .AsNoTracking()
             .Where(x => x.invoice.invoice_date >= start && x.invoice.invoice_date <= end)
             .Select(x => new RawRow(x.invoice.invoice_date, (double)x.quantity))
-            .ToListAsync();
+            .ToList();
 
-        var outgoingRaw = await _context.schet_faktura_soderzanies
+        var outgoingRaw = _context.schet_faktura_soderzanies
             .AsNoTracking()
             .Where(x => x.invoice.invoice_date >= start && x.invoice.invoice_date <= end)
             .Select(x => new RawRow(x.invoice.invoice_date, (double)x.quantity))
-            .ToListAsync();
+            .ToList();
 
         var incomingAgg = Aggregate(incomingRaw, SelectedGrouping);
         var outgoingAgg = Aggregate(outgoingRaw, SelectedGrouping);
