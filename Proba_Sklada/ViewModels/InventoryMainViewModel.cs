@@ -88,6 +88,47 @@ namespace Inventori_Manager.ViewModels
         public ICommand SaveExpenseCommand { get; }
         public ICommand ClearExpenseCommand { get; }
         #endregion
+
+        #region Позиции (фильтрация)
+        private ObservableCollection<inventory> _filteredInventoryItems = new();
+        private product? _filterProduct;
+        private storage_location? _filterLocation;
+        private string _filterBatchNumber = string.Empty;
+        private bool _filterOnlyPositiveQuantity = true;
+
+        public ObservableCollection<inventory> FilteredInventoryItems
+        {
+            get => _filteredInventoryItems;
+            set { _filteredInventoryItems = value; OnPropertyChanged(); }
+        }
+
+        public product? FilterProduct
+        {
+            get => _filterProduct;
+            set { _filterProduct = value; OnPropertyChanged(); }
+        }
+
+        public storage_location? FilterLocation
+        {
+            get => _filterLocation;
+            set { _filterLocation = value; OnPropertyChanged(); }
+        }
+
+        public string FilterBatchNumber
+        {
+            get => _filterBatchNumber;
+            set { _filterBatchNumber = value; OnPropertyChanged(); }
+        }
+
+        public bool FilterOnlyPositiveQuantity
+        {
+            get => _filterOnlyPositiveQuantity;
+            set { _filterOnlyPositiveQuantity = value; OnPropertyChanged(); }
+        }
+
+        public ICommand ApplyFilterCommand { get; }
+        public ICommand ResetFilterCommand { get; }
+        #endregion
         public InventoryViewModel(dbBaza context, user currentUser = null)
         {
             _context = context;
@@ -111,6 +152,9 @@ namespace Inventori_Manager.ViewModels
             AddToExpenseCommand = new RelayCommand(AddToExpense);
             SaveExpenseCommand = new RelayCommand(SaveExpense);
             ClearExpenseCommand = new RelayCommand(ClearExpense);
+
+            ApplyFilterCommand = new RelayCommand(ApplyFilter);
+            ResetFilterCommand = new RelayCommand(ResetFilter);
 
             LoadData();
         }
@@ -141,6 +185,7 @@ namespace Inventori_Manager.ViewModels
                 foreach (var inv in await _context.inventories.Include(i => i.product).Include(i => i.location).ToListAsync())
                     InventoryItems.Add(inv);
 
+                ApplyFilter();
                 RebuildLocationStocks();
 
                 Discrepancies.Clear();
@@ -317,6 +362,43 @@ namespace Inventori_Manager.ViewModels
             NewInvoiceDate = null;
             SelectedSupplier = null;
             CurrentInvoiceItems.Clear();
+        }
+
+        
+
+        private void ApplyFilter()
+        {
+            if (InventoryItems == null) return;
+
+            var query = InventoryItems.AsEnumerable();
+
+            if (FilterProduct != null)
+                query = query.Where(i => i.product_id == FilterProduct.id);
+
+            if (FilterLocation != null)
+                query = query.Where(i => i.location_id == FilterLocation.id);
+
+            if (!string.IsNullOrWhiteSpace(FilterBatchNumber))
+            {
+                string filter = FilterBatchNumber.Trim();
+                query = query.Where(i =>
+                    (i.batch_number != null && i.batch_number.Contains(filter, StringComparison.OrdinalIgnoreCase)) ||
+                    (i.serial_number != null && i.serial_number.Contains(filter, StringComparison.OrdinalIgnoreCase)));
+            }
+
+            if (FilterOnlyPositiveQuantity)
+                query = query.Where(i => i.kolichestvo > 0);
+
+            FilteredInventoryItems = new ObservableCollection<inventory>(query);
+        }
+
+        private void ResetFilter()
+        {
+            FilterProduct = null;
+            FilterLocation = null;
+            FilterBatchNumber = string.Empty;
+            FilterOnlyPositiveQuantity = true;
+            ApplyFilter();
         }
 
         // ----- Инвентаризация -----

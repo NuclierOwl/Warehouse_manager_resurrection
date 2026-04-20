@@ -1,4 +1,5 @@
 using Avalonia.Controls;
+using Avalonia.Interactivity;
 using Inventori_Manager.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -38,6 +39,12 @@ namespace Inventori_Manager
             // InvBox.ItemsSource = inv;
         }
 
+        private void ExitButton_Click(object sender, RoutedEventArgs e)
+        {
+            var loginWindow = new LoginWindow();
+            loginWindow.Show();
+            this.Close();
+        }
         private void Cheaker()
         {
             var db = App.Services.GetRequiredService<dbBaza>();

@@ -35,9 +35,7 @@ public partial class AdminWindow : Window
     {
         Get();
         LoadUsersForEditing();
-        LoadCategories();
         LoadUnits();
-        LoadProducts();
     }
 
     private void SelectionChanged(object o, SelectionChangedEventArgs e)
@@ -248,20 +246,7 @@ public partial class AdminWindow : Window
     }
 
     // ----- Categories / Products (without ViewModels) -----
-    private void LoadCategories()
-    {
-        var db = App.Services.GetRequiredService<dbBaza>();
-        var items = db.product_categories
-            .AsNoTracking()
-            .OrderBy(c => c.name)
-            .ToList();
 
-        _categories.Clear();
-        foreach (var c in items) _categories.Add(c);
-
-        if (CategoriesGrid != null)
-            CategoriesGrid.ItemsSource = _categories;
-    }
 
     private void LoadUnits()
     {
@@ -275,20 +260,7 @@ public partial class AdminWindow : Window
         foreach (var u in items) _units.Add(u);
     }
 
-    private void LoadProducts()
-    {
-        var db = App.Services.GetRequiredService<dbBaza>();
-        var items = db.products
-            .AsNoTracking()
-            .OrderBy(p => p.name)
-            .ToList();
 
-        _products.Clear();
-        foreach (var p in items) _products.Add(p);
-
-        if (ProductsGrid != null)
-            ProductsGrid.ItemsSource = _products;
-    }
 
     private async Task<bool> ConfirmAsync(string title, string message)
     {
@@ -520,18 +492,16 @@ public partial class AdminWindow : Window
         return await tcs.Task;
     }
 
-    private void RefreshCategoriesButton_Click(object sender, RoutedEventArgs e) => LoadCategories();
-
     private void RefreshProductsButton_Click(object sender, RoutedEventArgs e)
     {
-        LoadCategories();
+        
         LoadUnits();
-        LoadProducts();
+        
     }
 
     private async void AddCategoryButton_Click(object sender, RoutedEventArgs e)
     {
-        LoadCategories();
+        
         var model = await ShowCategoryDialogAsync(null);
         if (model == null) return;
 
@@ -543,164 +513,18 @@ public partial class AdminWindow : Window
             parent_id = model.parent_id
         });
         await db.SaveChangesAsync();
-        LoadCategories();
+        
     }
-
-    private async void EditCategoryButton_Click(object sender, RoutedEventArgs e)
-    {
-        if (CategoriesGrid?.SelectedItem is not product_category selected) return;
-
-        LoadCategories();
-        var model = await ShowCategoryDialogAsync(selected);
-        if (model == null) return;
-
-        var db = App.Services.GetRequiredService<dbBaza>();
-        var entity = await db.product_categories.FirstOrDefaultAsync(c => c.id == selected.id);
-        if (entity == null) return;
-
-        entity.name = model.name;
-        entity.description = model.description;
-        entity.parent_id = model.parent_id;
-
-        await db.SaveChangesAsync();
-        LoadCategories();
-    }
-
-    private async void DeleteCategoryButton_Click(object sender, RoutedEventArgs e)
-    {
-        if (CategoriesGrid?.SelectedItem is not product_category selected) return;
-
-        var ok = await ConfirmAsync("???????? ?????????", $"??????? ????????? \"{selected.name}\"?");
-        if (!ok) return;
-
-        var db = App.Services.GetRequiredService<dbBaza>();
-
-        var hasChildren = await db.product_categories.AnyAsync(c => c.parent_id == selected.id);
-        if (hasChildren)
-        {
-            await ShowNotificationDialog("? ????????? ???? ???????? ?????????. ??????? ??????????/??????? ??.");
-            return;
-        }
-
-        var hasProducts = await db.products.AnyAsync(p => p.category_id == selected.id);
-        if (hasProducts)
-        {
-            await ShowNotificationDialog("? ???? ????????? ????????? ??????. ??????? ???????? ????????? ???????.");
-            return;
-        }
-
-        var entity = await db.product_categories.FirstOrDefaultAsync(c => c.id == selected.id);
-        if (entity == null) return;
-
-        db.product_categories.Remove(entity);
-        await db.SaveChangesAsync();
-        LoadCategories();
-    }
-
-    private async void AddProductButton_Click(object sender, RoutedEventArgs e)
-    {
-        LoadCategories();
-        LoadUnits();
-
-        if (_units.Count == 0)
-        {
-            await ShowNotificationDialog("??? ?????? ????????? ? ??. ????????? ??????? sklad.units.");
-            return;
-        }
-
-        var model = await ShowProductDialogAsync(null);
-        if (model == null) return;
-
-        var db = App.Services.GetRequiredService<dbBaza>();
-        var skuExists = await db.products.AnyAsync(p => p.sku == model.sku);
-        if (skuExists)
-        {
-            await ShowNotificationDialog("????? ? ????? SKU ??? ??????????.");
-            return;
-        }
-
-        db.products.Add(new product
-        {
-            sku = model.sku,
-            name = model.name,
-            description = model.description,
-            category_id = model.category_id,
-            unit_id = model.unit_id,
-            min_stock_level = model.min_stock_level,
-            max_stock_level = model.max_stock_level,
-            purchase_price = model.purchase_price,
-            selling_price = model.selling_price,
-            barcode = model.barcode,
-            is_active = model.is_active
-        });
-
-        await db.SaveChangesAsync();
-        LoadProducts();
-    }
-
-    private async void EditProductButton_Click(object sender, RoutedEventArgs e)
-    {
-        if (ProductsGrid?.SelectedItem is not product selected) return;
-
-        LoadCategories();
-        LoadUnits();
-
-        var model = await ShowProductDialogAsync(selected);
-        if (model == null) return;
-
-        var db = App.Services.GetRequiredService<dbBaza>();
-        var skuExists = await db.products.AnyAsync(p => p.sku == model.sku && p.id != selected.id);
-        if (skuExists)
-        {
-            await ShowNotificationDialog("????? ? ????? SKU ??? ??????????.");
-            return;
-        }
-
-        var entity = await db.products.FirstOrDefaultAsync(p => p.id == selected.id);
-        if (entity == null) return;
-
-        entity.sku = model.sku;
-        entity.name = model.name;
-        entity.description = model.description;
-        entity.category_id = model.category_id;
-        entity.unit_id = model.unit_id;
-        entity.min_stock_level = model.min_stock_level;
-        entity.max_stock_level = model.max_stock_level;
-        entity.purchase_price = model.purchase_price;
-        entity.selling_price = model.selling_price;
-        entity.barcode = model.barcode;
-        entity.is_active = model.is_active;
-
-        await db.SaveChangesAsync();
-        LoadProducts();
-    }
-
-    private async void DeleteProductButton_Click(object sender, RoutedEventArgs e)
-    {
-        if (ProductsGrid?.SelectedItem is not product selected) return;
-
-        var ok = await ConfirmAsync("???????? ??????", $"??????? ????? \"{selected.name}\" (SKU: {selected.sku})?");
-        if (!ok) return;
-
-        var db = App.Services.GetRequiredService<dbBaza>();
-        var entity = await db.products.FirstOrDefaultAsync(p => p.id == selected.id);
-        if (entity == null) return;
-
-        db.products.Remove(entity);
-        await db.SaveChangesAsync();
-        LoadProducts();
-    }
-
-    //     
     private string HashPassword(string password)
     {
-        //      
-        // : BCrypt.Net.BCrypt.HashPassword(password);
-        //     
         return Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(password));
     }
-
-    //       
+    private void ExitButton_Click(object sender, RoutedEventArgs e)
+    {
+        var loginWindow = new LoginWindow();
+        loginWindow.Show();
+        this.Close();
+    }
     private async Task ShowNotificationDialog(string message)
     {
         var dialog = new Window()

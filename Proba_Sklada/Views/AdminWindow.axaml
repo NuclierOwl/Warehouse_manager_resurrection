@@ -4,7 +4,6 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:dao="using:Proba_Sklada.Hardik.Dao"
         xmlns:system="clr-namespace:System;assembly=System.Runtime"
-        xmlns:dg="https://github.com/avaloniaui/datagrid"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="Inventori_Manager.AdminWindow"
         Title="AdminWindow"
@@ -16,18 +15,21 @@
                       Width="150" 
                       Margin="0,0,10,0"
                       SelectionChanged="SelectionChanged">
-                <ComboBoxItem>���</ComboBoxItem>
-                <ComboBoxItem>�� ��������</ComboBoxItem>
-                <ComboBoxItem>�� �����������</ComboBoxItem>
+                <ComboBoxItem>Все</ComboBoxItem>
+                <ComboBoxItem>По убыванию</ComboBoxItem>
+                <ComboBoxItem>По возрастанию</ComboBoxItem>
             </ComboBox>
+            <Button Name="ExitButton" 
+            Content="Выйти" 
+            Click="ExitButton_Click"/>
 
             <TextBox Name="SerchBox" 
-                     Watermark="����� �������������..." 
+                     Watermark="Поиск пользователей..." 
                      TextChanged="TextChanged"/>
         </DockPanel>
   
         <TabControl>
-            <TabItem Header="Control Manager">
+            <TabItem Header="Упровление правами пользователя">
                 <ListBox Name="AllUsersBox" Margin="5">
                     <ListBox.ItemTemplate>
                         <DataTemplate x:DataType="dao:user">
@@ -68,7 +70,7 @@
                 </ListBox>
             </TabItem>
             
-            <TabItem Header="Users Manager">
+            <TabItem Header="Менеджмент пользователей">
                 <Grid Margin="5">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
@@ -151,64 +153,6 @@
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
-                </Grid>
-            </TabItem>
-
-            <TabItem Header="���������">
-                <Grid Margin="5" RowDefinitions="Auto,*">
-                    <StackPanel Grid.Row="0"
-                                Orientation="Horizontal"
-                                HorizontalAlignment="Right"
-                                Spacing="8"
-                                Margin="0,0,0,10">
-                        <Button Content="�������" Click="AddCategoryButton_Click"/>
-                        <Button Content="�������������" Click="EditCategoryButton_Click"/>
-                        <Button Content="�������" Click="DeleteCategoryButton_Click"/>
-                        <Button Content="��������" Click="RefreshCategoriesButton_Click"/>
-                    </StackPanel>
-
-                    <dg:DataGrid Grid.Row="1"
-                                 Name="CategoriesGrid"
-                                 AutoGenerateColumns="False"
-                                 IsReadOnly="True"
-                                 SelectionMode="Single">
-                        <dg:DataGrid.Columns>
-                            <dg:DataGridTextColumn Header="ID" Binding="{Binding id}" Width="Auto"/>
-                            <dg:DataGridTextColumn Header="��������" Binding="{Binding name}" Width="*"/>
-                            <dg:DataGridTextColumn Header="�������� (ID)" Binding="{Binding parent_id}" Width="Auto"/>
-                            <dg:DataGridTextColumn Header="��������" Binding="{Binding description}" Width="2*"/>
-                        </dg:DataGrid.Columns>
-                    </dg:DataGrid>
-                </Grid>
-            </TabItem>
-
-            <TabItem Header="������">
-                <Grid Margin="5" RowDefinitions="Auto,*">
-                    <StackPanel Grid.Row="0"
-                                Orientation="Horizontal"
-                                HorizontalAlignment="Right"
-                                Spacing="8"
-                                Margin="0,0,0,10">
-                        <Button Content="�������" Click="AddProductButton_Click"/>
-                        <Button Content="�������������" Click="EditProductButton_Click"/>
-                        <Button Content="�������" Click="DeleteProductButton_Click"/>
-                        <Button Content="��������" Click="RefreshProductsButton_Click"/>
-                    </StackPanel>
-
-                    <dg:DataGrid Grid.Row="1"
-                                 Name="ProductsGrid"
-                                 AutoGenerateColumns="False"
-                                 IsReadOnly="True"
-                                 SelectionMode="Single">
-                        <dg:DataGrid.Columns>
-                            <dg:DataGridTextColumn Header="ID" Binding="{Binding id}" Width="Auto"/>
-                            <dg:DataGridTextColumn Header="SKU" Binding="{Binding sku}" Width="Auto"/>
-                            <dg:DataGridTextColumn Header="��������" Binding="{Binding name}" Width="*"/>
-                            <dg:DataGridTextColumn Header="��������� (ID)" Binding="{Binding category_id}" Width="Auto"/>
-                            <dg:DataGridTextColumn Header="��.��� (ID)" Binding="{Binding unit_id}" Width="Auto"/>
-                            <dg:DataGridTextColumn Header="�������" Binding="{Binding is_active}" Width="Auto"/>
-                        </dg:DataGrid.Columns>
-                    </dg:DataGrid>
                 </Grid>
             </TabItem>
         </TabControl>

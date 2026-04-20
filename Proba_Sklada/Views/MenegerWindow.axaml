@@ -11,19 +11,19 @@
 <StackPanel>
       <DockPanel>
           <ComboBox Name="ComboFilter" SelectionChanged="SelectionChanged">
-              <ComboBoxItem></ComboBoxItem>
-              <ComboBoxItem> </ComboBoxItem>
-              <ComboBoxItem> </ComboBoxItem>
+              <ComboBoxItem>Все</ComboBoxItem>
+                <ComboBoxItem>По убыванию</ComboBoxItem>
+                <ComboBoxItem>По возрастанию</ComboBoxItem>
           </ComboBox>
 
-          <TextBox Name="SerchBox" Watermark="" TextChanged="TextChanged"/>
+          <TextBox Name="SerchBox" Watermark="Поиск..." TextChanged="TextChanged"/>
       </DockPanel>
   
       <TabControl>
-          <TabItem Header="Otchetnost">
+          <TabItem Header="Отчетность">
 
           </TabItem>
-          <TabItem Header="Stat">
+          <TabItem Header="Статистика">
               <Grid RowDefinitions="Auto,*" Margin="12">
                   <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
                       <StackPanel>
