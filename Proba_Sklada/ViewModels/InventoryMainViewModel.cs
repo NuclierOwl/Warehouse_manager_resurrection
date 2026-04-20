@@ -117,46 +117,57 @@ namespace Inventori_Manager.ViewModels
 
         private async void LoadData()
         {
-            Products.Clear();
-            foreach (var p in await _context.products.Where(p => p.is_active == true).ToListAsync())
-                Products.Add(p);
-
-            StorageLocations.Clear();
-            foreach (var loc in await _context.storage_locations.ToListAsync())
-                StorageLocations.Add(loc);
-
-            Suppliers.Clear();
-            foreach (var sup in await _context.counter_ogents.Where(c => c.type == "supplier" && c.is_active == true).ToListAsync())
-                Suppliers.Add(sup);
-
-            Customers.Clear();
-            foreach (var cust in await _context.counter_ogents.Where(c => c.type == "customer" && c.is_active == true).ToListAsync())
-                Customers.Add(cust);
-
-            InventoryItems.Clear();
-            foreach (var inv in await _context.inventories.Include(i => i.product).Include(i => i.location).ToListAsync())
-                InventoryItems.Add(inv);
-
-            RebuildLocationStocks();
-
-            Discrepancies.Clear();
-            var discrepancies = await _context.inventory_discrepancies
-                .Include(d => d.product)
-                .Include(d => d.location)
-                .OrderByDescending(d => d.id)
-                .ToListAsync();
-
-            foreach (var d in discrepancies)
+            try
             {
-                Discrepancies.Add(new DiscrepancyModel
+                await _context.Database.CanConnectAsync();
+
+                Products.Clear();
+                foreach (var p in await _context.products.Where(p => p.is_active == true).ToListAsync())
+                    Products.Add(p);
+
+                StorageLocations.Clear();
+                foreach (var loc in await _context.storage_locations.ToListAsync())
+                    StorageLocations.Add(loc);
+
+                Suppliers.Clear();
+                foreach (var sup in await _context.counter_ogents.Where(c => c.type == "supplier" && c.is_active == true).ToListAsync())
+                    Suppliers.Add(sup);
+
+                Customers.Clear();
+                foreach (var cust in await _context.counter_ogents.Where(c => c.type == "customer" && c.is_active == true).ToListAsync())
+                    Customers.Add(cust);
+
+                InventoryItems.Clear();
+                foreach (var inv in await _context.inventories.Include(i => i.product).Include(i => i.location).ToListAsync())
+                    InventoryItems.Add(inv);
+
+                RebuildLocationStocks();
+
+                Discrepancies.Clear();
+                var discrepancies = await _context.inventory_discrepancies
+                    .Include(d => d.product)
+                    .Include(d => d.location)
+                    .OrderByDescending(d => d.id)
+                    .ToListAsync();
+
+                foreach (var d in discrepancies)
                 {
-                    ProductName = d.product?.name,
-                    LocationCode = d.location?.location_code,
-                    ExpectedQuantity = d.expected_quantity,
-                    ActualQuantity = d.actual_quantity,
-                    Discrepancy = d.discrepancy ?? (d.actual_quantity - d.expected_quantity),
-                    Reason = d.discrepancy_reason
-                });
+                    Discrepancies.Add(new DiscrepancyModel
+                    {
+                        ProductName = d.product?.name,
+                        LocationCode = d.location?.location_code,
+                        ExpectedQuantity = d.expected_quantity,
+                        ActualQuantity = d.actual_quantity,
+                        Discrepancy = d.discrepancy ?? (d.actual_quantity - d.expected_quantity),
+                        Reason = d.discrepancy_reason
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                await MessageBoxManager
+                    .GetMessageBoxStandard("Ошибка загрузки данных", ex.Message, MsBox.Avalonia.Enums.ButtonEnum.Ok)
+                    .ShowAsync();
             }
         }
 
