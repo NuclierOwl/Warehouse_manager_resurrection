@@ -117,17 +117,17 @@
                             Command="{Binding AddToInvoiceCommand}" 
                             HorizontalAlignment="Left" Margin="5,10"/>
 
-                    <dg:DataGrid Grid.Row="5" ItemsSource="{Binding CurrentInvoiceItems}" Margin="5"
+                    <DataGrid Grid.Row="5" ItemsSource="{Binding CurrentInvoiceItems}" Margin="5"
                               AutoGenerateColumns="False">
-                        <dg:DataGrid.Columns>
-                            <dg:DataGridTextColumn Header="Товар" Binding="{Binding ProductName}" Width="*"/>
-                            <dg:DataGridTextColumn Header="Кол-во" Binding="{Binding Quantity}" Width="Auto"/>
-                            <dg:DataGridTextColumn Header="Цена" Binding="{Binding UnitPrice}" Width="Auto"/>
-                            <dg:DataGridTextColumn Header="Сумма" Binding="{Binding TotalPrice}" Width="Auto"/>
-                            <dg:DataGridTextColumn Header="Место" Binding="{Binding LocationCode}" Width="Auto"/>
-                            <dg:DataGridTextColumn Header="Партия" Binding="{Binding BatchNumber}" Width="Auto"/>
-                        </dg:DataGrid.Columns>
-                    </dg:DataGrid>
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Товар" Binding="{Binding ProductName}" Width="*"/>
+                            <DataGridTextColumn Header="Кол-во" Binding="{Binding Quantity}" Width="Auto"/>
+                            <DataGridTextColumn Header="Цена" Binding="{Binding UnitPrice}" Width="Auto"/>
+                            <DataGridTextColumn Header="Сумма" Binding="{Binding TotalPrice}" Width="Auto"/>
+                            <DataGridTextColumn Header="Место" Binding="{Binding LocationCode}" Width="Auto"/>
+                            <DataGridTextColumn Header="Партия" Binding="{Binding BatchNumber}" Width="Auto"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
 
                     <StackPanel Grid.Row="6" Orientation="Horizontal" HorizontalAlignment="Right" Margin="5">
                         <Button Content="Сохранить накладную" Command="{Binding SaveInvoiceCommand}" Margin="5,0"/>
@@ -159,17 +159,17 @@
                             Command="{Binding RecordDiscrepancyCommand}"
                             HorizontalAlignment="Left" Margin="5,10"/>
 
-                    <dg:DataGrid Grid.Row="3" ItemsSource="{Binding Discrepancies}" Margin="5"
+                    <DataGrid Grid.Row="3" ItemsSource="{Binding Discrepancies}" Margin="5"
                               AutoGenerateColumns="False">
-                        <dg:DataGrid.Columns>
-                            <dg:DataGridTextColumn Header="Товар" Binding="{Binding ProductName}" Width="*"/>
-                            <dg:DataGridTextColumn Header="Место" Binding="{Binding LocationCode}" Width="Auto"/>
-                            <dg:DataGridTextColumn Header="Ожидаемое" Binding="{Binding ExpectedQuantity}" Width="Auto"/>
-                            <dg:DataGridTextColumn Header="Фактическое" Binding="{Binding ActualQuantity}" Width="Auto"/>
-                            <dg:DataGridTextColumn Header="Расхождение" Binding="{Binding Discrepancy}" Width="Auto"/>
-                            <dg:DataGridTextColumn Header="Причина" Binding="{Binding Reason}" Width="*"/>
-                        </dg:DataGrid.Columns>
-                    </dg:DataGrid>
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Товар" Binding="{Binding ProductName}" Width="*"/>
+                            <DataGridTextColumn Header="Место" Binding="{Binding LocationCode}" Width="Auto"/>
+                            <DataGridTextColumn Header="Ожидаемое" Binding="{Binding ExpectedQuantity}" Width="Auto"/>
+                            <DataGridTextColumn Header="Фактическое" Binding="{Binding ActualQuantity}" Width="Auto"/>
+                            <DataGridTextColumn Header="Расхождение" Binding="{Binding Discrepancy}" Width="Auto"/>
+                            <DataGridTextColumn Header="Причина" Binding="{Binding Reason}" Width="*"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
                 </Grid>
             </TabItem>
 
@@ -213,16 +213,16 @@
                             Command="{Binding AddToExpenseCommand}"
                             HorizontalAlignment="Left" Margin="5,10"/>
 
-                    <dg:DataGrid Grid.Row="5" ItemsSource="{Binding CurrentExpenseItems}" Margin="5"
+                    <DataGrid Grid.Row="5" ItemsSource="{Binding CurrentExpenseItems}" Margin="5"
                               AutoGenerateColumns="False">
-                        <dg:DataGrid.Columns>
-                            <dg:DataGridTextColumn Header="Товар" Binding="{Binding ProductName}" Width="*"/>
-                            <dg:DataGridTextColumn Header="Кол-во" Binding="{Binding Quantity}" Width="Auto"/>
-                            <dg:DataGridTextColumn Header="Цена" Binding="{Binding UnitPrice}" Width="Auto"/>
-                            <dg:DataGridTextColumn Header="Сумма" Binding="{Binding TotalPrice}" Width="Auto"/>
-                            <dg:DataGridTextColumn Header="Место" Binding="{Binding LocationCode}" Width="Auto"/>
-                        </dg:DataGrid.Columns>
-                    </dg:DataGrid>
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Товар" Binding="{Binding ProductName}" Width="*"/>
+                            <DataGridTextColumn Header="Кол-во" Binding="{Binding Quantity}" Width="Auto"/>
+                            <DataGridTextColumn Header="Цена" Binding="{Binding UnitPrice}" Width="Auto"/>
+                            <DataGridTextColumn Header="Сумма" Binding="{Binding TotalPrice}" Width="Auto"/>
+                            <DataGridTextColumn Header="Место" Binding="{Binding LocationCode}" Width="Auto"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
 
                     <StackPanel Grid.Row="6" Orientation="Horizontal" HorizontalAlignment="Right" Margin="5">
                         <Button Content="Сохранить накладную" Command="{Binding SaveExpenseCommand}" Margin="5,0"/>
@@ -239,21 +239,21 @@
                                FontWeight="Bold"
                                Margin="0,0,0,8"/>
 
-                    <dg:DataGrid Grid.Row="1"
+                    <DataGrid Grid.Row="1"
                               ItemsSource="{Binding LocationStocks}"
                               AutoGenerateColumns="False"
                               IsReadOnly="True"
                               Margin="5">
-                        <dg:DataGrid.Styles>
+                        <DataGrid.Styles>
                             <Style Selector="DataGridRow" x:DataType="vm:InventoryViewModel+LocationStockModel">
                                 <Setter Property="ToolTip.Tip" Value="{Binding TooltipText}"/>
                             </Style>
-                        </dg:DataGrid.Styles>
-                        <dg:DataGrid.Columns>
-                            <dg:DataGridTextColumn Header="Позиция" Binding="{Binding LocationCode}" Width="*"/>
-                            <dg:DataGridTextColumn Header="Всего, шт." Binding="{Binding TotalQuantity}" Width="Auto"/>
-                        </dg:DataGrid.Columns>
-                    </dg:DataGrid>
+                        </DataGrid.Styles>
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Позиция" Binding="{Binding LocationCode}" Width="*"/>
+                            <DataGridTextColumn Header="Всего, шт." Binding="{Binding TotalQuantity}" Width="Auto"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
                 </Grid>
             </TabItem>
         </TabControl>
