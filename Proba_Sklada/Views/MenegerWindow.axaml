@@ -15,6 +15,9 @@
                 <ComboBoxItem>По убыванию</ComboBoxItem>
                 <ComboBoxItem>По возрастанию</ComboBoxItem>
           </ComboBox>
+          <Button Name="ExitButton" 
+            Content="Выйти" 
+            Click="ExitButton_Click"/>
 
           <TextBox Name="SerchBox" Watermark="Поиск..." TextChanged="TextChanged"/>
       </DockPanel>
