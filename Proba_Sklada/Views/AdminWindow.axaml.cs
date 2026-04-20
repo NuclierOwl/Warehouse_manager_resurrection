@@ -3,10 +3,12 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Layout;
 using Avalonia.Media;
+using Microsoft.EntityFrameworkCore;
 using Proba_Sklada.Hardik.Connector;
 using Proba_Sklada.Hardik.Dao;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,8 +18,12 @@ namespace Inventori_Manager;
 
 public partial class AdminWindow : Window
 {
-    // ˜˜˜˜˜˜˜ ˜˜˜ ˜˜˜˜˜˜˜˜˜˜˜˜ ˜˜˜˜˜˜˜˜˜˜ ˜˜˜˜˜˜˜˜˜˜˜˜˜
+    //     
     private Dictionary<int, user> modifiedUsers = new Dictionary<int, user>();
+
+    private readonly ObservableCollection<product_category> _categories = new();
+    private readonly ObservableCollection<product> _products = new();
+    private readonly ObservableCollection<unit> _units = new();
 
     public AdminWindow()
     {
@@ -29,6 +35,9 @@ public partial class AdminWindow : Window
     {
         Get();
         LoadUsersForEditing();
+        LoadCategories();
+        LoadUnits();
+        LoadProducts();
     }
 
     private void SelectionChanged(object o, SelectionChangedEventArgs e)
@@ -78,7 +87,7 @@ public partial class AdminWindow : Window
         UsersListBox.ItemsSource = users;
     }
 
-    // ˜˜˜˜˜˜˜˜˜˜ ˜˜˜˜˜˜˜˜˜ ˜˜˜˜ ˜ Control Manager
+    //     Control Manager
     private void RoleComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         if (sender is ComboBox comboBox && comboBox.DataContext is user selectedUser)
@@ -90,11 +99,11 @@ public partial class AdminWindow : Window
                 userToUpdate.role = comboBox.SelectedItem?.ToString();
                 db.SaveChanges();
 
-                // ˜˜˜˜˜˜˜˜˜ ˜˜˜˜˜˜ ˜ Control Manager
+                //    Control Manager
                 Get();
 
-                // ˜˜˜˜˜˜˜˜˜˜ ˜˜˜˜˜˜˜˜˜˜˜ ˜˜ ˜˜˜˜˜˜˜˜ ˜˜˜˜˜˜˜˜˜
-                ShowNotification($"˜˜˜˜ ˜˜˜˜˜˜˜˜˜˜˜˜ {selectedUser.full_name} ˜˜˜˜˜˜˜˜ ˜˜ {userToUpdate.role}");
+                //     
+                ShowNotification($"  {selectedUser.full_name}   {userToUpdate.role}");
             }
         }
     }
@@ -117,7 +126,7 @@ public partial class AdminWindow : Window
 
         LoadUsersForEditing();
 
-        await ShowNotificationDialog("˜˜˜˜˜ ˜˜˜˜˜˜˜˜˜˜˜˜ ˜˜˜˜˜˜˜˜. ˜˜˜˜˜˜ ˜˜ ˜˜˜˜˜˜˜˜˜: 123456");
+        await ShowNotificationDialog("  .   : 123456");
     }
 
     private async void SaveUserButton_Click(object sender, RoutedEventArgs e)
@@ -128,13 +137,13 @@ public partial class AdminWindow : Window
             var userToUpdate = db.users.FirstOrDefault(u => u.id == userId);
             if (userToUpdate != null)
             {
-                // ˜˜˜˜˜˜˜ ˜˜˜˜˜˜˜ ˜ ListBox
+                //    ListBox
                 if (UsersListBox.Items is IEnumerable<user> users)
                 {
                     var editedUser = users.FirstOrDefault(u => u.id == userId);
                     if (editedUser != null)
                     {
-                        // ˜˜˜˜˜˜˜˜˜ ˜˜˜˜˜˜
+                        //  
                         userToUpdate.username = editedUser.username;
                         userToUpdate.full_name = editedUser.full_name;
                         userToUpdate.email = editedUser.email;
@@ -143,26 +152,26 @@ public partial class AdminWindow : Window
 
                         db.SaveChanges();
 
-                        // ˜˜˜˜˜˜˜˜˜ ˜˜˜ ˜˜˜˜˜˜
+                        //   
                         Get();
                         LoadUsersForEditing();
 
-                        await ShowNotificationDialog($"˜˜˜˜˜˜˜˜˜˜˜˜ {editedUser.full_name} ˜˜˜˜˜˜˜ ˜˜˜˜˜˜˜˜");
+                        await ShowNotificationDialog($" {editedUser.full_name}  ");
                     }
                 }
             }
         }
     }
 
-    // ˜˜˜˜˜˜˜˜˜˜ ˜˜˜˜˜˜˜˜ ˜˜˜˜˜˜˜˜˜˜˜˜
+    //   
     private async void DeleteUserButton_Click(object sender, RoutedEventArgs e)
     {
         if (sender is Button button && button.Tag is int userId)
         {
-            // ˜˜˜˜˜˜˜˜˜˜˜˜˜ ˜˜˜˜˜˜˜˜
+            //  
             var dialog = new Window()
             {
-                Title = "˜˜˜˜˜˜˜˜˜˜˜˜˜ ˜˜˜˜˜˜˜˜",
+                Title = " ",
                 Width = 300,
                 Height = 150,
                 WindowStartupLocation = WindowStartupLocation.CenterOwner
@@ -176,7 +185,7 @@ public partial class AdminWindow : Window
 
             panel.Children.Add(new TextBlock
             {
-                Text = "˜˜ ˜˜˜˜˜˜˜, ˜˜˜ ˜˜˜˜˜˜ ˜˜˜˜˜˜˜ ˜˜˜˜˜ ˜˜˜˜˜˜˜˜˜˜˜˜?",
+                Text = " ,     ?",
                 TextWrapping = TextWrapping.Wrap
             });
 
@@ -187,8 +196,8 @@ public partial class AdminWindow : Window
                 Spacing = 10
             };
 
-            var yesButton = new Button { Content = "˜˜", Width = 80 };
-            var noButton = new Button { Content = "˜˜˜", Width = 80 };
+            var yesButton = new Button { Content = "", Width = 80 };
+            var noButton = new Button { Content = "", Width = 80 };
 
             yesButton.Click += async (s, args) =>
             {
@@ -196,13 +205,13 @@ public partial class AdminWindow : Window
                 var userToDelete = db.users.FirstOrDefault(u => u.id == userId);
                 if (userToDelete != null)
                 {
-                    // ˜˜˜˜˜˜˜˜˜, ˜˜ ˜˜˜˜˜˜˜˜ ˜˜ ˜˜˜ ˜˜˜˜˜˜˜˜˜ ˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜
+                    // ,      
                     if (userToDelete.role == "admin")
                     {
                         var adminCount = db.users.Count(u => u.role == "admin");
                         if (adminCount <= 1)
                         {
-                            await ShowNotificationDialog("˜˜˜˜˜˜˜˜˜˜ ˜˜˜˜˜˜˜ ˜˜˜˜˜˜˜˜˜˜ ˜˜˜˜˜˜˜˜˜˜˜˜˜˜!");
+                            await ShowNotificationDialog("   !");
                             dialog.Close();
                             return;
                         }
@@ -211,11 +220,11 @@ public partial class AdminWindow : Window
                     db.users.Remove(userToDelete);
                     db.SaveChanges();
 
-                    // ˜˜˜˜˜˜˜˜˜ ˜˜˜ ˜˜˜˜˜˜
+                    //   
                     Get();
                     LoadUsersForEditing();
 
-                    await ShowNotificationDialog($"˜˜˜˜˜˜˜˜˜˜˜˜ {userToDelete.full_name} ˜˜˜˜˜˜");
+                    await ShowNotificationDialog($" {userToDelete.full_name} ");
                     dialog.Close();
                 }
             };
@@ -231,28 +240,472 @@ public partial class AdminWindow : Window
         }
     }
 
-    // ˜˜˜˜˜˜˜˜˜˜ ˜˜˜˜˜˜˜˜˜˜ ˜˜˜˜˜˜
+    //   
     private void RefreshButton_Click(object sender, RoutedEventArgs e)
     {
         Get();
         LoadUsersForEditing();
     }
 
-    // ˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜ ˜˜˜˜˜ ˜˜˜ ˜˜˜˜˜˜˜˜˜˜˜ ˜˜˜˜˜˜
+    // ----- Categories / Products (without ViewModels) -----
+    private void LoadCategories()
+    {
+        var db = App.Services.GetRequiredService<dbBaza>();
+        var items = db.product_categories
+            .AsNoTracking()
+            .OrderBy(c => c.name)
+            .ToList();
+
+        _categories.Clear();
+        foreach (var c in items) _categories.Add(c);
+
+        if (CategoriesGrid != null)
+            CategoriesGrid.ItemsSource = _categories;
+    }
+
+    private void LoadUnits()
+    {
+        var db = App.Services.GetRequiredService<dbBaza>();
+        var items = db.units
+            .AsNoTracking()
+            .OrderBy(u => u.name)
+            .ToList();
+
+        _units.Clear();
+        foreach (var u in items) _units.Add(u);
+    }
+
+    private void LoadProducts()
+    {
+        var db = App.Services.GetRequiredService<dbBaza>();
+        var items = db.products
+            .AsNoTracking()
+            .OrderBy(p => p.name)
+            .ToList();
+
+        _products.Clear();
+        foreach (var p in items) _products.Add(p);
+
+        if (ProductsGrid != null)
+            ProductsGrid.ItemsSource = _products;
+    }
+
+    private async Task<bool> ConfirmAsync(string title, string message)
+    {
+        var dialog = new Window
+        {
+            Title = title,
+            Width = 380,
+            Height = 170,
+            WindowStartupLocation = WindowStartupLocation.CenterOwner
+        };
+
+        var root = new StackPanel { Margin = new Thickness(16), Spacing = 12 };
+        root.Children.Add(new TextBlock { Text = message, TextWrapping = TextWrapping.Wrap });
+
+        var buttons = new StackPanel
+        {
+            Orientation = Orientation.Horizontal,
+            HorizontalAlignment = HorizontalAlignment.Right,
+            Spacing = 8
+        };
+
+        var ok = new Button { Content = "??", Width = 90 };
+        var cancel = new Button { Content = "???", Width = 90 };
+
+        var tcs = new TaskCompletionSource<bool>();
+        ok.Click += (_, __) => { tcs.TrySetResult(true); dialog.Close(); };
+        cancel.Click += (_, __) => { tcs.TrySetResult(false); dialog.Close(); };
+
+        buttons.Children.Add(ok);
+        buttons.Children.Add(cancel);
+        root.Children.Add(buttons);
+
+        dialog.Content = root;
+        await dialog.ShowDialog(this);
+        return await tcs.Task;
+    }
+
+    private async Task<product_category?> ShowCategoryDialogAsync(product_category? existing)
+    {
+        var dialog = new Window
+        {
+            Title = existing == null ? "????? ?????????" : "?????????????? ?????????",
+            Width = 520,
+            Height = 300,
+            WindowStartupLocation = WindowStartupLocation.CenterOwner
+        };
+
+        var nameBox = new TextBox { Watermark = "????????", Text = existing?.name ?? "" };
+        var parentBox = new ComboBox { PlaceholderText = "???????????? ????????? (?????????????)" };
+        var descBox = new TextBox { Watermark = "????????", Text = existing?.description ?? "", AcceptsReturn = true, Height = 90 };
+
+        var parentChoices = _categories
+            .Where(c => existing == null || c.id != existing.id)
+            .OrderBy(c => c.name)
+            .ToList();
+        parentBox.ItemsSource = parentChoices;
+        parentBox.DisplayMemberBinding = new Avalonia.Data.Binding("name");
+        if (existing?.parent_id != null)
+            parentBox.SelectedItem = parentChoices.FirstOrDefault(c => c.id == existing.parent_id);
+
+        var okBtn = new Button { Content = "?????????", Width = 120 };
+        var cancelBtn = new Button { Content = "??????", Width = 120 };
+        var tcs = new TaskCompletionSource<product_category?>();
+
+        okBtn.Click += async (_, __) =>
+        {
+            var name = (nameBox.Text ?? "").Trim();
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                await ShowNotificationDialog("??????? ???????? ?????????.");
+                return;
+            }
+
+            var parent = parentBox.SelectedItem as product_category;
+            tcs.TrySetResult(new product_category
+            {
+                id = existing?.id ?? 0,
+                name = name,
+                parent_id = parent?.id,
+                description = string.IsNullOrWhiteSpace(descBox.Text) ? null : descBox.Text.Trim()
+            });
+            dialog.Close();
+        };
+
+        cancelBtn.Click += (_, __) => { tcs.TrySetResult(null); dialog.Close(); };
+
+        var form = new StackPanel { Margin = new Thickness(16), Spacing = 8 };
+        form.Children.Add(nameBox);
+        form.Children.Add(parentBox);
+        form.Children.Add(descBox);
+
+        var buttons = new StackPanel
+        {
+            Orientation = Orientation.Horizontal,
+            HorizontalAlignment = HorizontalAlignment.Right,
+            Spacing = 8,
+            Margin = new Thickness(16, 0, 16, 16)
+        };
+        buttons.Children.Add(okBtn);
+        buttons.Children.Add(cancelBtn);
+
+        var root = new DockPanel();
+        DockPanel.SetDock(buttons, Dock.Bottom);
+        root.Children.Add(buttons);
+        root.Children.Add(form);
+
+        dialog.Content = root;
+        await dialog.ShowDialog(this);
+        return await tcs.Task;
+    }
+
+    private async Task<product?> ShowProductDialogAsync(product? existing)
+    {
+        var dialog = new Window
+        {
+            Title = existing == null ? "????? ?????" : "?????????????? ??????",
+            Width = 640,
+            Height = 520,
+            WindowStartupLocation = WindowStartupLocation.CenterOwner
+        };
+
+        var skuBox = new TextBox { Watermark = "SKU", Text = existing?.sku ?? "" };
+        var nameBox = new TextBox { Watermark = "????????", Text = existing?.name ?? "" };
+        var categoryBox = new ComboBox { PlaceholderText = "????????? (?????????????)" };
+        var unitBox = new ComboBox { PlaceholderText = "??.??? (???????????)" };
+        var barcodeBox = new TextBox { Watermark = "????????", Text = existing?.barcode ?? "" };
+        var purchasePriceBox = new TextBox { Watermark = "?????????? ???? (???????? 12.50)", Text = existing?.purchase_price?.ToString() ?? "" };
+        var sellingPriceBox = new TextBox { Watermark = "???? ??????? (???????? 15.00)", Text = existing?.selling_price?.ToString() ?? "" };
+        var minBox = new TextBox { Watermark = "???.???????", Text = existing?.min_stock_level?.ToString() ?? "" };
+        var maxBox = new TextBox { Watermark = "????.???????", Text = existing?.max_stock_level?.ToString() ?? "" };
+        var isActiveBox = new CheckBox { Content = "???????", IsChecked = existing?.is_active ?? true };
+        var descBox = new TextBox { Watermark = "????????", Text = existing?.description ?? "", AcceptsReturn = true, Height = 90 };
+
+        categoryBox.ItemsSource = _categories.OrderBy(c => c.name).ToList();
+        categoryBox.DisplayMemberBinding = new Avalonia.Data.Binding("name");
+        if (existing?.category_id != null)
+            categoryBox.SelectedItem = _categories.FirstOrDefault(c => c.id == existing.category_id);
+
+        unitBox.ItemsSource = _units.OrderBy(u => u.name).ToList();
+        unitBox.DisplayMemberBinding = new Avalonia.Data.Binding("name");
+        unitBox.SelectedItem = _units.FirstOrDefault(u => u.id == existing?.unit_id) ?? _units.FirstOrDefault();
+
+        int? ParseIntOrNull(string? s)
+        {
+            s = (s ?? "").Trim();
+            if (string.IsNullOrWhiteSpace(s)) return null;
+            return int.TryParse(s, out var v) ? v : null;
+        }
+
+        decimal? ParseDecOrNull(string? s)
+        {
+            s = (s ?? "").Trim().Replace(',', '.');
+            if (string.IsNullOrWhiteSpace(s)) return null;
+            return decimal.TryParse(s, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out var v) ? v : null;
+        }
+
+        var okBtn = new Button { Content = "?????????", Width = 120 };
+        var cancelBtn = new Button { Content = "??????", Width = 120 };
+        var tcs = new TaskCompletionSource<product?>();
+
+        okBtn.Click += async (_, __) =>
+        {
+            var sku = (skuBox.Text ?? "").Trim();
+            var name = (nameBox.Text ?? "").Trim();
+            if (string.IsNullOrWhiteSpace(sku) || string.IsNullOrWhiteSpace(name))
+            {
+                await ShowNotificationDialog("SKU ? ???????? ???????????.");
+                return;
+            }
+
+            if (unitBox.SelectedItem is not unit selectedUnit)
+            {
+                await ShowNotificationDialog("???????? ??????? ?????????.");
+                return;
+            }
+
+            var selectedCategory = categoryBox.SelectedItem as product_category;
+
+            tcs.TrySetResult(new product
+            {
+                id = existing?.id ?? 0,
+                sku = sku,
+                name = name,
+                description = string.IsNullOrWhiteSpace(descBox.Text) ? null : descBox.Text.Trim(),
+                category_id = selectedCategory?.id,
+                unit_id = selectedUnit.id,
+                purchase_price = ParseDecOrNull(purchasePriceBox.Text),
+                selling_price = ParseDecOrNull(sellingPriceBox.Text),
+                min_stock_level = ParseIntOrNull(minBox.Text),
+                max_stock_level = ParseIntOrNull(maxBox.Text),
+                barcode = string.IsNullOrWhiteSpace(barcodeBox.Text) ? null : barcodeBox.Text.Trim(),
+                is_active = isActiveBox.IsChecked ?? true
+            });
+            dialog.Close();
+        };
+
+        cancelBtn.Click += (_, __) => { tcs.TrySetResult(null); dialog.Close(); };
+
+        var form = new StackPanel { Margin = new Thickness(16), Spacing = 8 };
+        form.Children.Add(skuBox);
+        form.Children.Add(nameBox);
+        form.Children.Add(categoryBox);
+        form.Children.Add(unitBox);
+        form.Children.Add(barcodeBox);
+        form.Children.Add(purchasePriceBox);
+        form.Children.Add(sellingPriceBox);
+        form.Children.Add(minBox);
+        form.Children.Add(maxBox);
+        form.Children.Add(isActiveBox);
+        form.Children.Add(descBox);
+
+        var buttons = new StackPanel
+        {
+            Orientation = Orientation.Horizontal,
+            HorizontalAlignment = HorizontalAlignment.Right,
+            Spacing = 8,
+            Margin = new Thickness(16, 0, 16, 16)
+        };
+        buttons.Children.Add(okBtn);
+        buttons.Children.Add(cancelBtn);
+
+        var root = new DockPanel();
+        DockPanel.SetDock(buttons, Dock.Bottom);
+        root.Children.Add(buttons);
+        root.Children.Add(new ScrollViewer { Content = form });
+
+        dialog.Content = root;
+        await dialog.ShowDialog(this);
+        return await tcs.Task;
+    }
+
+    private void RefreshCategoriesButton_Click(object sender, RoutedEventArgs e) => LoadCategories();
+
+    private void RefreshProductsButton_Click(object sender, RoutedEventArgs e)
+    {
+        LoadCategories();
+        LoadUnits();
+        LoadProducts();
+    }
+
+    private async void AddCategoryButton_Click(object sender, RoutedEventArgs e)
+    {
+        LoadCategories();
+        var model = await ShowCategoryDialogAsync(null);
+        if (model == null) return;
+
+        var db = App.Services.GetRequiredService<dbBaza>();
+        db.product_categories.Add(new product_category
+        {
+            name = model.name,
+            description = model.description,
+            parent_id = model.parent_id
+        });
+        await db.SaveChangesAsync();
+        LoadCategories();
+    }
+
+    private async void EditCategoryButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (CategoriesGrid?.SelectedItem is not product_category selected) return;
+
+        LoadCategories();
+        var model = await ShowCategoryDialogAsync(selected);
+        if (model == null) return;
+
+        var db = App.Services.GetRequiredService<dbBaza>();
+        var entity = await db.product_categories.FirstOrDefaultAsync(c => c.id == selected.id);
+        if (entity == null) return;
+
+        entity.name = model.name;
+        entity.description = model.description;
+        entity.parent_id = model.parent_id;
+
+        await db.SaveChangesAsync();
+        LoadCategories();
+    }
+
+    private async void DeleteCategoryButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (CategoriesGrid?.SelectedItem is not product_category selected) return;
+
+        var ok = await ConfirmAsync("???????? ?????????", $"??????? ????????? \"{selected.name}\"?");
+        if (!ok) return;
+
+        var db = App.Services.GetRequiredService<dbBaza>();
+
+        var hasChildren = await db.product_categories.AnyAsync(c => c.parent_id == selected.id);
+        if (hasChildren)
+        {
+            await ShowNotificationDialog("? ????????? ???? ???????? ?????????. ??????? ??????????/??????? ??.");
+            return;
+        }
+
+        var hasProducts = await db.products.AnyAsync(p => p.category_id == selected.id);
+        if (hasProducts)
+        {
+            await ShowNotificationDialog("? ???? ????????? ????????? ??????. ??????? ???????? ????????? ???????.");
+            return;
+        }
+
+        var entity = await db.product_categories.FirstOrDefaultAsync(c => c.id == selected.id);
+        if (entity == null) return;
+
+        db.product_categories.Remove(entity);
+        await db.SaveChangesAsync();
+        LoadCategories();
+    }
+
+    private async void AddProductButton_Click(object sender, RoutedEventArgs e)
+    {
+        LoadCategories();
+        LoadUnits();
+
+        if (_units.Count == 0)
+        {
+            await ShowNotificationDialog("??? ?????? ????????? ? ??. ????????? ??????? sklad.units.");
+            return;
+        }
+
+        var model = await ShowProductDialogAsync(null);
+        if (model == null) return;
+
+        var db = App.Services.GetRequiredService<dbBaza>();
+        var skuExists = await db.products.AnyAsync(p => p.sku == model.sku);
+        if (skuExists)
+        {
+            await ShowNotificationDialog("????? ? ????? SKU ??? ??????????.");
+            return;
+        }
+
+        db.products.Add(new product
+        {
+            sku = model.sku,
+            name = model.name,
+            description = model.description,
+            category_id = model.category_id,
+            unit_id = model.unit_id,
+            min_stock_level = model.min_stock_level,
+            max_stock_level = model.max_stock_level,
+            purchase_price = model.purchase_price,
+            selling_price = model.selling_price,
+            barcode = model.barcode,
+            is_active = model.is_active
+        });
+
+        await db.SaveChangesAsync();
+        LoadProducts();
+    }
+
+    private async void EditProductButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (ProductsGrid?.SelectedItem is not product selected) return;
+
+        LoadCategories();
+        LoadUnits();
+
+        var model = await ShowProductDialogAsync(selected);
+        if (model == null) return;
+
+        var db = App.Services.GetRequiredService<dbBaza>();
+        var skuExists = await db.products.AnyAsync(p => p.sku == model.sku && p.id != selected.id);
+        if (skuExists)
+        {
+            await ShowNotificationDialog("????? ? ????? SKU ??? ??????????.");
+            return;
+        }
+
+        var entity = await db.products.FirstOrDefaultAsync(p => p.id == selected.id);
+        if (entity == null) return;
+
+        entity.sku = model.sku;
+        entity.name = model.name;
+        entity.description = model.description;
+        entity.category_id = model.category_id;
+        entity.unit_id = model.unit_id;
+        entity.min_stock_level = model.min_stock_level;
+        entity.max_stock_level = model.max_stock_level;
+        entity.purchase_price = model.purchase_price;
+        entity.selling_price = model.selling_price;
+        entity.barcode = model.barcode;
+        entity.is_active = model.is_active;
+
+        await db.SaveChangesAsync();
+        LoadProducts();
+    }
+
+    private async void DeleteProductButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (ProductsGrid?.SelectedItem is not product selected) return;
+
+        var ok = await ConfirmAsync("???????? ??????", $"??????? ????? \"{selected.name}\" (SKU: {selected.sku})?");
+        if (!ok) return;
+
+        var db = App.Services.GetRequiredService<dbBaza>();
+        var entity = await db.products.FirstOrDefaultAsync(p => p.id == selected.id);
+        if (entity == null) return;
+
+        db.products.Remove(entity);
+        await db.SaveChangesAsync();
+        LoadProducts();
+    }
+
+    //     
     private string HashPassword(string password)
     {
-        // ˜ ˜˜˜˜˜˜˜˜ ˜˜˜˜˜˜˜˜˜˜ ˜˜˜˜˜˜˜˜˜˜˜ ˜˜˜˜˜˜˜˜˜˜ ˜˜˜˜˜˜˜˜˜˜˜
-        // ˜˜˜˜˜˜˜˜: BCrypt.Net.BCrypt.HashPassword(password);
-        // ˜˜˜ ˜˜˜˜˜˜˜˜ ˜˜˜˜˜˜˜˜˜˜ ˜˜˜˜˜˜˜ ˜˜˜˜˜˜˜˜˜˜˜˜˜˜
+        //      
+        // : BCrypt.Net.BCrypt.HashPassword(password);
+        //     
         return Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(password));
     }
 
-    // ˜˜˜˜˜ ˜˜˜ ˜˜˜˜˜˜˜˜˜˜˜ ˜˜˜˜˜˜˜˜˜˜˜ ˜ ˜˜˜˜˜˜˜˜˜˜ ˜˜˜˜
+    //       
     private async Task ShowNotificationDialog(string message)
     {
         var dialog = new Window()
         {
-            Title = "˜˜˜˜˜˜˜˜˜˜˜",
+            Title = "",
             Width = 400,
             Height = 100,
             WindowStartupLocation = WindowStartupLocation.CenterOwner
