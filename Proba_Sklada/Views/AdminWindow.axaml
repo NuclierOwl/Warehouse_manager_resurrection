@@ -84,12 +84,12 @@
                                 HorizontalAlignment="Right"
                                 Margin="0,0,0,10">
                         <Button Name="AddUserButton" 
-                                Content="Add user" 
+                                Content="Добавить пользователя" 
                                 Margin="0,0,10,0"
                                 Click="AddUserButton_Click"/>
                         
                         <Button Name="RefreshButton" 
-                                Content="Obnovit" 
+                                Content="Обноовить" 
                                 Click="RefreshButton_Click"/>
                     </StackPanel>
                     
@@ -139,13 +139,13 @@
                                                     Orientation="Horizontal" 
                                                     Spacing="5">
                                             <Button Name="SaveButton" 
-                                                    Content="Save" 
-                                                    Width="70"
+                                                    Content="Сохранить" 
+                                                    Width="85"
                                                     Tag="{Binding id}"
                                                     Click="SaveUserButton_Click"/>
                                             
                                             <Button Name="DeleteButton" 
-                                                    Content="Drop" 
+                                                    Content="Удалить" 
                                                     Width="70"
                                                     Tag="{Binding id}"
                                                     Click="DeleteUserButton_Click"/>
