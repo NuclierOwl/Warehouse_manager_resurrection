@@ -4,10 +4,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:dao="using:Proba_Sklada.Hardik.Dao"
         xmlns:system="clr-namespace:System;assembly=System.Runtime"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="800"
         x:Class="Inventori_Manager.AdminWindow"
-        Title="AdminWindow"
-        Height="720" Width="1080">
+        Title="Админестрирование"
+        FontFamily="Segoe UI"
+        Background="#FF0A0A0F">
     
     <StackPanel Margin="10">
         <DockPanel Margin="0,0,0,10">
@@ -19,13 +20,14 @@
                 <ComboBoxItem>По убыванию</ComboBoxItem>
                 <ComboBoxItem>По возрастанию</ComboBoxItem>
             </ComboBox>
-            <Button Name="ExitButton" 
-            Content="Выйти" 
-            Click="ExitButton_Click"/>
+            
 
             <TextBox Name="SerchBox" 
                      Watermark="Поиск пользователей..." 
                      TextChanged="TextChanged"/>
+            <Button Name="ExitButton" 
+            Content="Выйти" 
+            Click="ExitButton_Click"/>
         </DockPanel>
   
         <TabControl>

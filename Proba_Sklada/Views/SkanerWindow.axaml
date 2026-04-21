@@ -7,7 +7,9 @@
         xmlns:dao="clr-namespace:Inventori_Manager.Hardik.Dao"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="Proba_Sklada.SkanerWindow"
-        Title="Генератор Strih-codeов">
+        Title="Генератор Strih-кодов"
+        FontFamily="Segoe UI"
+        Background="#FF0A0A0F">
   <!--  
     <Grid Margin="20">
         <Grid.RowDefinitions>

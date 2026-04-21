@@ -8,7 +8,6 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace Inventori_Manager.ViewModels
@@ -211,7 +210,7 @@ namespace Inventori_Manager.ViewModels
             catch (Exception ex)
             {
                 await MessageBoxManager
-                    .GetMessageBoxStandard("Ошибка загрузки данных", ex.Message, MsBox.Avalonia.Enums.ButtonEnum.Ok)
+                    .GetMessageBoxStandard("Ошибка загрузки данных: ", ex.Message, MsBox.Avalonia.Enums.ButtonEnum.Ok)
                     .ShowAsync();
             }
         }
@@ -364,7 +363,7 @@ namespace Inventori_Manager.ViewModels
             CurrentInvoiceItems.Clear();
         }
 
-        
+
 
         private void ApplyFilter()
         {
@@ -494,7 +493,7 @@ namespace Inventori_Manager.ViewModels
                 {
                     var invoice = new schet_faktura
                     {
-                        invoice_number = ExpenseInvoiceNumber ?? ran.Next(100000000,999999999).ToString(),
+                        invoice_number = ExpenseInvoiceNumber ?? ran.Next(100000000, 999999999).ToString(),
                         invoice_date = ExpenseInvoiceDate.HasValue ? DateOnly.FromDateTime(ExpenseInvoiceDate.Value.DateTime) : DateOnly.FromDateTime(DateTime.Now),
                         customer_id = SelectedCustomer.id,
                         status = "completed",

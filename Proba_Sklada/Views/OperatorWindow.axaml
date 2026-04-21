@@ -8,7 +8,7 @@
         mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="800"
         x:Class="Inventori_Manager.OperatorWindow"
         x:DataType="vm:InventoryViewModel"
-        Title="Warehouse Management System"
+        Title="Упровление складом"
         FontFamily="Segoe UI"
         Background="#FF0A0A0F">
 
@@ -43,14 +43,15 @@
         
 
     <Grid RowDefinitions="Auto,*" Margin="10">
-        <TextBlock Grid.Row="0" Grid.Column="1" Text="Управление складом" FontSize="20" FontWeight="Bold"
+       <!-- <TextBlock Grid.Row="0" Grid.Column="1" Text="Управление складом" FontSize="20" FontWeight="Bold"
                    Foreground="{StaticResource AccentBrush}" Margin="0,0,0,10"/>
-        <Button Grid.Row="0" Grid.Column="0" Name="ExitButton" 
+                   -->
+        <Button Grid.Row="0" Name="ExitButton" 
             Content="Выйти" 
             Click="ExitButton_Click"/>
         <TabControl Grid.Row="1">
             <!-- Вкладка "Приход товаров" -->
-            <TabItem Header="Приход товаров">
+            <TabItem Header="Прием товаров">
                 <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,*" Margin="5">
                     <TextBlock Grid.Row="0" Text="Новая поставка" FontWeight="Bold" Margin="0,0,0,8"/>
 
