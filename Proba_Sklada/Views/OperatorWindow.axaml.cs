@@ -36,7 +36,7 @@ namespace Inventori_Manager
             var db = App.Services.GetRequiredService<dbBaza>();
             List<inventory> inv = db.inventories.Include(e => e.location).Include(e => e.product).ToList();
 
-            // InvBox.ItemsSource = inv;
+            InventoryBox.ItemsSource = inv;
         }
 
         private void ExitButton_Click(object sender, RoutedEventArgs e)

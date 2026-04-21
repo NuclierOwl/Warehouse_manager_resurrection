@@ -244,21 +244,24 @@
                         HorizontalAlignment="Stretch"/>
             </Grid>
         </Border>
-
-        <!-- Таблица позиций - убраны неподдерживаемые свойства -->
-        <DataGrid Grid.Row="2" ItemsSource="{Binding FilteredInventoryItems}" 
-                  AutoGenerateColumns="False" Margin="5">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="Товар" Binding="{Binding product.name}" Width="2*"/>
-                <DataGridTextColumn Header="Место хранения" Binding="{Binding location.location_code}" Width="*"/>
-                <DataGridTextColumn Header="Количество" Binding="{Binding kolichestvo}" Width="Auto"/>
-                <DataGridTextColumn Header="Партия" Binding="{Binding batch_number}" Width="*"/>
-                <DataGridTextColumn Header="Серийный номер" Binding="{Binding serial_number}" Width="*"/>
-                <DataGridTextColumn Header="Дата производства" Binding="{Binding production_date}" Width="Auto"/>
-                <DataGridTextColumn Header="Дата списания" Binding="{Binding spisanie_date}" Width="Auto"/>
-                <DataGridTextColumn Header="Последнее обновление" Binding="{Binding last_updated}" Width="Auto"/>
-            </DataGrid.Columns>
-        </DataGrid>
+        <ListBox Grid.Row="2" Name="InventoryBox" Margin="5">
+    <ListBox.ItemTemplate>
+        <DataTemplate x:DataType="dao:inventory">
+            <Border BorderBrush="LightGray" BorderThickness="0,0,0,1" Padding="5">
+                <StackPanel Orientation="Horizontal" Spacing="10">
+                    <TextBlock Text="{Binding product.name}" MinWidth="150" />
+                    <TextBlock Text="{Binding location.location_code}" MinWidth="100" />
+                    <TextBlock Text="{Binding kolichestvo}" MinWidth="60" />
+                    <TextBlock Text="{Binding batch_number}" MinWidth="100" />
+                    <TextBlock Text="{Binding serial_number}" MinWidth="120" />
+                    <TextBlock Text="{Binding production_date, StringFormat='yyyy-MM-dd'}" MinWidth="100" />
+                    <TextBlock Text="{Binding spisanie_date, StringFormat='yyyy-MM-dd'}" MinWidth="100" />
+                    <TextBlock Text="{Binding last_updated, StringFormat='yyyy-MM-dd HH:mm'}" MinWidth="140" />
+                </StackPanel>
+            </Border>
+        </DataTemplate>
+    </ListBox.ItemTemplate>
+</ListBox>
     </Grid>
 </TabItem>
         </TabControl>
