@@ -4,16 +4,33 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="Inventori_Manager.LoginWindow"
-        Title="�����������"
-		FontFamily="Segoe UI"
-        Background="#FF0A0A0F">
-  <Grid VerticalAlignment="Center" HorizontalAlignment="Center">
-		<StackPanel VerticalAlignment="Center">
-			<TextBox Watermark="Login" x:Name="UserName"/>
-			<TextBox Watermark="Password" x:Name="UserPass"/>
-			<Button x:Name="KnopkaWhoda" Margin="25,15,0,5" Content="Log in" Click="KnopkaWhoda_Click"/>
-		<!--	<Button x:Name="KnopkaTest" Content="Test" Click="KnopkaTest_Click"/>
-			<Button x:Name="KnopkaRega" Content="�����������" Click="KnopkaRega_Click"/> -->
-		</StackPanel>
-	</Grid>
+        Title="Авторизация">
+  <Grid>
+    <Border Classes="Card"
+            Width="420"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center">
+      <StackPanel Spacing="14">
+        <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+          <PathIcon Data="{StaticResource IconBox}"
+                    Width="18"
+                    Height="18"
+                    Foreground="{DynamicResource DashAccentBrush}" />
+          <TextBlock Classes="H2" Text="Менеджер склада" />
+        </StackPanel>
+        
+        <TextBlock Classes="Muted" Text="Введите ваш логин и пароль" />
+
+        <StackPanel Spacing="10">
+          <TextBox Watermark="Логин" x:Name="UserName"/>
+          <TextBox Watermark="Пароль" x:Name="UserPass"/>
+        </StackPanel>
+
+        <Button x:Name="KnopkaWhoda"
+                Classes="Primary"
+                Content="Войти"
+                Click="KnopkaWhoda_Click"/>
+      </StackPanel>
+    </Border>
+  </Grid>
 </Window>

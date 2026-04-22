@@ -1,0 +1,118 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <Styles.Resources>
+    <!-- Core palette -->
+    <Color x:Key="DashBg">#FF0B1220</Color>
+    <Color x:Key="DashSurface">#FF111A2E</Color>
+    <Color x:Key="DashSurface2">#FF16223B</Color>
+    <Color x:Key="DashBorder">#FF273553</Color>
+    <Color x:Key="DashText">#FFEAF0FF</Color>
+    <Color x:Key="DashText2">#FFAEB9D3</Color>
+    <Color x:Key="DashAccent">#FF5B8CFF</Color>
+    <Color x:Key="DashSuccess">#FF2DD4BF</Color>
+    <Color x:Key="DashWarning">#FFFBBF24</Color>
+    <Color x:Key="DashDanger">#FFFB7185</Color>
+
+    <SolidColorBrush x:Key="DashBgBrush" Color="{StaticResource DashBg}" />
+    <SolidColorBrush x:Key="DashSurfaceBrush" Color="{StaticResource DashSurface}" />
+    <SolidColorBrush x:Key="DashSurface2Brush" Color="{StaticResource DashSurface2}" />
+    <SolidColorBrush x:Key="DashBorderBrush" Color="{StaticResource DashBorder}" />
+    <SolidColorBrush x:Key="DashTextBrush" Color="{StaticResource DashText}" />
+    <SolidColorBrush x:Key="DashText2Brush" Color="{StaticResource DashText2}" />
+    <SolidColorBrush x:Key="DashAccentBrush" Color="{StaticResource DashAccent}" />
+    <SolidColorBrush x:Key="DashSuccessBrush" Color="{StaticResource DashSuccess}" />
+    <SolidColorBrush x:Key="DashWarningBrush" Color="{StaticResource DashWarning}" />
+    <SolidColorBrush x:Key="DashDangerBrush" Color="{StaticResource DashDanger}" />
+
+    <!-- Common sizes -->
+    <Thickness x:Key="DashPagePadding">24</Thickness>
+    <CornerRadius x:Key="DashRadiusSm">8</CornerRadius>
+    <CornerRadius x:Key="DashRadiusMd">12</CornerRadius>
+  </Styles.Resources>
+
+  <!-- Window -->
+  <Style Selector="Window">
+    <Setter Property="Background" Value="{DynamicResource DashBgBrush}" />
+    <Setter Property="Foreground" Value="{DynamicResource DashTextBrush}" />
+    <Setter Property="FontFamily" Value="Inter, Segoe UI" />
+    <Setter Property="FontSize" Value="14" />
+  </Style>
+
+  <!-- Typography helpers -->
+  <Style Selector="TextBlock.H1">
+    <Setter Property="FontSize" Value="22" />
+    <Setter Property="FontWeight" Value="SemiBold" />
+  </Style>
+  <Style Selector="TextBlock.H2">
+    <Setter Property="FontSize" Value="18" />
+    <Setter Property="FontWeight" Value="SemiBold" />
+  </Style>
+  <Style Selector="TextBlock.Muted">
+    <Setter Property="Foreground" Value="{DynamicResource DashText2Brush}" />
+  </Style>
+
+  <!-- Card -->
+  <Style Selector="Border.Card">
+    <Setter Property="Background" Value="{DynamicResource DashSurfaceBrush}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource DashBorderBrush}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="{DynamicResource DashRadiusMd}" />
+    <Setter Property="Padding" Value="16" />
+  </Style>
+
+  <!-- Inputs -->
+  <Style Selector="TextBox">
+    <Setter Property="Background" Value="{DynamicResource DashSurface2Brush}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource DashBorderBrush}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="{DynamicResource DashRadiusSm}" />
+    <Setter Property="Padding" Value="10,8" />
+  </Style>
+  <Style Selector="ComboBox">
+    <Setter Property="Background" Value="{DynamicResource DashSurface2Brush}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource DashBorderBrush}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="{DynamicResource DashRadiusSm}" />
+    <Setter Property="Padding" Value="10,8" />
+  </Style>
+  <Style Selector="DatePicker">
+    <Setter Property="Background" Value="{DynamicResource DashSurface2Brush}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource DashBorderBrush}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="{DynamicResource DashRadiusSm}" />
+    <Setter Property="Padding" Value="10,8" />
+  </Style>
+
+  <!-- Buttons -->
+  <Style Selector="Button">
+    <Setter Property="CornerRadius" Value="{DynamicResource DashRadiusSm}" />
+    <Setter Property="Padding" Value="12,8" />
+    <Setter Property="Background" Value="{DynamicResource DashSurface2Brush}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource DashBorderBrush}" />
+    <Setter Property="BorderThickness" Value="1" />
+  </Style>
+  <Style Selector="Button.Primary">
+    <Setter Property="Background" Value="{DynamicResource DashAccentBrush}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource DashAccentBrush}" />
+    <Setter Property="Foreground" Value="White" />
+  </Style>
+  <Style Selector="Button.Danger">
+    <Setter Property="Background" Value="{DynamicResource DashDangerBrush}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource DashDangerBrush}" />
+    <Setter Property="Foreground" Value="White" />
+  </Style>
+
+  <!-- Tabs -->
+  <Style Selector="TabControl">
+    <Setter Property="Margin" Value="0" />
+  </Style>
+
+  <!-- DataGrid (basic visual unification) -->
+  <Style Selector="DataGrid">
+    <Setter Property="Background" Value="{DynamicResource DashSurfaceBrush}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource DashBorderBrush}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="{DynamicResource DashRadiusMd}" />
+  </Style>
+</Styles>
+

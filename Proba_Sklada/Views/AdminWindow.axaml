@@ -6,33 +6,44 @@
         xmlns:system="clr-namespace:System;assembly=System.Runtime"
         mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="800"
         x:Class="Inventori_Manager.AdminWindow"
-        Title="Админестрирование"
-        FontFamily="Segoe UI"
-        Background="#FF0A0A0F">
-    
-    <StackPanel Margin="10">
-        <DockPanel Margin="0,0,0,10">
-            <ComboBox Name="ComboFilter" 
-                      Width="150" 
-                      Margin="0,0,10,0"
-                      SelectionChanged="SelectionChanged">
-                <ComboBoxItem>Все</ComboBoxItem>
-                <ComboBoxItem>По убыванию</ComboBoxItem>
-                <ComboBoxItem>По возрастанию</ComboBoxItem>
-            </ComboBox>
-            
+        Title="Администрирование">
 
-            <TextBox Name="SerchBox" 
-                     Watermark="Поиск пользователей..." 
-                     TextChanged="TextChanged"/>
-            <Button Name="ExitButton" 
-            Content="Выйти" 
-            Click="ExitButton_Click"/>
-        </DockPanel>
-  
-        <TabControl>
-            <TabItem Header="Упровление правами пользователя">
-                <ListBox Name="AllUsersBox" Margin="5">
+    <Grid RowDefinitions="Auto,*" Margin="{DynamicResource DashPagePadding}">
+        <Border Grid.Row="0" Classes="Card" Padding="14">
+            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                    <PathIcon Data="{StaticResource IconUsers}"
+                              Width="18"
+                              Height="18"
+                              Foreground="{DynamicResource DashAccentBrush}" />
+                    <TextBlock Classes="H2" Text="Панель администратора" />
+                </StackPanel>
+
+                <DockPanel Grid.Column="1" LastChildFill="True">
+                    <ComboBox Name="ComboFilter"
+                              Width="170"
+                              Margin="0,0,10,0"
+                              SelectionChanged="SelectionChanged">
+                        <ComboBoxItem>Все</ComboBoxItem>
+                        <ComboBoxItem>По убыванию</ComboBoxItem>
+                        <ComboBoxItem>По возрастанию</ComboBoxItem>
+                    </ComboBox>
+                    <TextBox Name="SerchBox"
+                             Watermark="Поиск пользователей..."
+                             TextChanged="TextChanged"/>
+                </DockPanel>
+
+                <Button Grid.Column="2"
+                        Name="ExitButton"
+                        Content="Выйти"
+                        Click="ExitButton_Click"/>
+            </Grid>
+        </Border>
+
+        <Border Grid.Row="1" Classes="Card" Margin="0,14,0,0" Padding="12">
+            <TabControl>
+                <TabItem Header="Права пользователей">
+                    <ListBox Name="AllUsersBox" Margin="6">
                     <ListBox.ItemTemplate>
                         <DataTemplate x:DataType="dao:user">
                             <Border BorderBrush="LightGray" 
@@ -72,8 +83,8 @@
                 </ListBox>
             </TabItem>
             
-            <TabItem Header="Менеджмент пользователей">
-                <Grid Margin="5">
+            <TabItem Header="Управление пользователями">
+                <Grid Margin="6">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
@@ -89,7 +100,7 @@
                                 Click="AddUserButton_Click"/>
                         
                         <Button Name="RefreshButton" 
-                                Content="Обноовить" 
+                                Content="Обновить" 
                                 Click="RefreshButton_Click"/>
                     </StackPanel>
                     
@@ -157,6 +168,7 @@
                     </ListBox>
                 </Grid>
             </TabItem>
-        </TabControl>
-    </StackPanel>
+            </TabControl>
+        </Border>
+    </Grid>
 </Window>

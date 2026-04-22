@@ -7,49 +7,60 @@
         mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="800"
         x:Class="Inventori_Manager.MenegerWindow"
         x:DataType="vm:MenegerViewModel"
-        Title="Ìåíåäæìåíò"
-        FontFamily="Segoe UI"
-        Background="#FF0A0A0F">
-<StackPanel>
-      <DockPanel>
-          <ComboBox Name="ComboFilter" SelectionChanged="SelectionChanged">
-              <ComboBoxItem>Âñå</ComboBoxItem>
-                <ComboBoxItem>Ïî óáûâàíèþ</ComboBoxItem>
-                <ComboBoxItem>Ïî âîçðàñòàíèþ</ComboBoxItem>
-          </ComboBox>
-          <Button Name="ExitButton" 
-            Content="Âûéòè" 
-            Click="ExitButton_Click"/>
+        Title="??????????">
+  <Grid RowDefinitions="Auto,*" Margin="{DynamicResource DashPagePadding}">
+      <Border Grid.Row="0" Classes="Card" Padding="14">
+          <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+              <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                  <PathIcon Data="{StaticResource IconBox}"
+                            Width="18"
+                            Height="18"
+                            Foreground="{DynamicResource DashAccentBrush}" />
+                  <TextBlock Classes="H2" Text="????????" />
+              </StackPanel>
 
-          <TextBox Name="SerchBox" Watermark="Ïîèñê...˜˜˜˜˜" TextChanged="TextChanged"/>
-      </DockPanel>
-  
+              <DockPanel Grid.Column="1" LastChildFill="True">
+                  <ComboBox Name="ComboFilter" Width="170" Margin="0,0,10,0" SelectionChanged="SelectionChanged">
+                      <ComboBoxItem>???</ComboBoxItem>
+                      <ComboBoxItem>?? ????????</ComboBoxItem>
+                      <ComboBoxItem>?? ???????????</ComboBoxItem>
+                  </ComboBox>
+                  <TextBox Name="SerchBox" Watermark="?????..." TextChanged="TextChanged"/>
+              </DockPanel>
+
+              <Button Grid.Column="2"
+                      Name="ExitButton"
+                      Content="?????"
+                      Click="ExitButton_Click"/>
+          </Grid>
+      </Border>
+
+      <Border Grid.Row="1" Classes="Card" Margin="0,14,0,0" Padding="12">
       <TabControl>
-          <TabItem Header="Îò÷åòíîñòü">
-
+          <TabItem Header="??????????">
           </TabItem>
-          <TabItem Header="Ñòàòèñòèêà">
+          <TabItem Header="??????????">
               <Grid RowDefinitions="Auto,*" Margin="12">
                   <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
                       <StackPanel>
-                          <TextBlock Text="˜˜˜˜˜˜ ˜" Margin="0,0,0,4"/>
+                          <TextBlock Text="?????? ?" Margin="0,0,0,4"/>
                           <DatePicker SelectedDate="{Binding StartDate}" Width="160"/>
                       </StackPanel>
                       <StackPanel>
-                          <TextBlock Text="˜˜" Margin="0,0,0,4"/>
+                          <TextBlock Text="??" Margin="0,0,0,4"/>
                           <DatePicker SelectedDate="{Binding EndDate}" Width="160"/>
                       </StackPanel>
                       <StackPanel>
-                          <TextBlock Text="˜˜˜˜˜˜˜˜˜˜˜" Margin="0,0,0,4"/>
+                          <TextBlock Text="???????????" Margin="0,0,0,4"/>
                           <ComboBox ItemsSource="{Binding GroupingOptions}"
                                     SelectedItem="{Binding SelectedGrouping}"
                                     Width="160"/>
                       </StackPanel>
                   </StackPanel>
 
-                  <Border Grid.Row="1" Margin="0,12,0,0" CornerRadius="8" BorderThickness="1" BorderBrush="{DynamicResource ThemeBorderLowBrush}">
+                  <Border Grid.Row="1" Margin="0,12,0,0" CornerRadius="10" BorderThickness="1" BorderBrush="{DynamicResource DashBorderBrush}" Background="{DynamicResource DashSurfaceBrush}">
                       <Grid RowDefinitions="Auto,*" Margin="12">
-                          <TextBlock Grid.Row="0" Text="˜˜˜˜˜˜˜˜˜ / ˜˜˜˜˜˜˜˜˜" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                          <TextBlock Grid.Row="0" Text="????????? / ?????????" FontWeight="SemiBold" Margin="0,0,0,8"/>
                           <lvc:CartesianChart Grid.Row="1"
                                              Series="{Binding MovementSeries}"
                                              XAxes="{Binding XAxes}"
@@ -59,5 +70,6 @@
               </Grid>
           </TabItem>
       </TabControl>
-  </StackPanel>
+      </Border>
+  </Grid>
 </Window>

@@ -8,48 +8,28 @@
         mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="800"
         x:Class="Inventori_Manager.OperatorWindow"
         x:DataType="vm:InventoryViewModel"
-        Title="Упровление складом"
-        FontFamily="Segoe UI"
-        Background="#FF0A0A0F">
+        Title="Управление складом">
 
-    <Window.Resources>
-        <Color x:Key="PrimaryBackgroundColor">#FF0A0A0F</Color>
-        <Color x:Key="SecondaryBackgroundColor">#FF1A1A24</Color>
-        <Color x:Key="TertiaryBackgroundColor">#FF252533</Color>
-        <Color x:Key="BorderColor">#FF3A3A4D</Color>
-        <Color x:Key="AccentColor">#FF00B4D8</Color>
-        <Color x:Key="SuccessColor">#FF00CC88</Color>
-        <Color x:Key="WarningColor">#FFFFAA00</Color>
-        <Color x:Key="ErrorColor">#FFFF5555</Color>
-        <Color x:Key="PrimaryTextColor">#FFE0E0E0</Color>
-        <Color x:Key="SecondaryTextColor">#FFA0A0B0</Color>
-        <Color x:Key="DisabledTextColor">#FF606070</Color>
-        
-        <SolidColorBrush x:Key="PrimaryBackground" Color="{StaticResource PrimaryBackgroundColor}"/>
-        <SolidColorBrush x:Key="SecondaryBackground" Color="{StaticResource SecondaryBackgroundColor}"/>
-        <SolidColorBrush x:Key="TertiaryBackground" Color="{StaticResource TertiaryBackgroundColor}"/>
-        <SolidColorBrush x:Key="BorderBrush" Color="{StaticResource BorderColor}"/>
-        <SolidColorBrush x:Key="AccentBrush" Color="{StaticResource AccentColor}"/>
-        <SolidColorBrush x:Key="SuccessBrush" Color="{StaticResource SuccessColor}"/>
-        <SolidColorBrush x:Key="WarningBrush" Color="{StaticResource WarningColor}"/>
-        <SolidColorBrush x:Key="ErrorBrush" Color="{StaticResource ErrorColor}"/>
-        <SolidColorBrush x:Key="PrimaryTextBrush" Color="{StaticResource PrimaryTextColor}"/>
-        <SolidColorBrush x:Key="SecondaryTextBrush" Color="{StaticResource SecondaryTextColor}"/>
-        <SolidColorBrush x:Key="DisabledTextBrush" Color="{StaticResource DisabledTextColor}"/>
-        
-    </Window.Resources>
-        
+    <Grid RowDefinitions="Auto,*" Margin="{DynamicResource DashPagePadding}">
+        <Border Grid.Row="0" Classes="Card" Padding="14">
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                    <PathIcon Data="{StaticResource IconBox}"
+                              Width="18"
+                              Height="18"
+                              Foreground="{DynamicResource DashAccentBrush}" />
+                    <TextBlock Classes="H2" Text="Оператор — склад" />
+                </StackPanel>
 
-        
+                <Button Grid.Column="1"
+                        Name="ExitButton"
+                        Content="Выйти"
+                        Click="ExitButton_Click"/>
+            </Grid>
+        </Border>
 
-    <Grid RowDefinitions="Auto,*" Margin="10">
-       <!-- <TextBlock Grid.Row="0" Grid.Column="1" Text="Управление складом" FontSize="20" FontWeight="Bold"
-                   Foreground="{StaticResource AccentBrush}" Margin="0,0,0,10"/>
-                   -->
-        <Button Grid.Row="0" Name="ExitButton" 
-            Content="Выйти" 
-            Click="ExitButton_Click"/>
-        <TabControl Grid.Row="1">
+        <Border Grid.Row="1" Classes="Card" Margin="0,14,0,0" Padding="12">
+            <TabControl>
             <!-- Вкладка "Приход товаров" -->
             <TabItem Header="Прием товаров">
                 <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,*" Margin="5">
@@ -209,7 +189,7 @@
         <TextBlock Grid.Row="0" Text="Текущие остатки на складе" FontWeight="Bold" Margin="0,0,0,8"/>
 
         <!-- Панель фильтров -->
-        <Border Grid.Row="1" Background="{StaticResource SecondaryBackground}" 
+        <Border Grid.Row="1" Background="{DynamicResource DashSurface2Brush}" 
                 CornerRadius="5" Padding="8" Margin="0,0,0,10">
             <Grid ColumnDefinitions="Auto,*,Auto,*,Auto,*,Auto" RowDefinitions="Auto,Auto"
                   ColumnSpacing="8" RowSpacing="5">
@@ -264,6 +244,7 @@
 </ListBox>
     </Grid>
 </TabItem>
-        </TabControl>
+            </TabControl>
+        </Border>
     </Grid>
 </Window>
