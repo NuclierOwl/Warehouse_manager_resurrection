@@ -11,11 +11,14 @@
 
     <Application.Styles>
         <FluentTheme />
-        <StyleInclude Source="avares://Avalonia.Fonts.Inter/Inter.xaml" />
         <StyleInclude Source="avares://Proba_Sklada/Styles/Dashboard.axaml" />
     </Application.Styles>
 
     <Application.Resources>
-        <ResourceInclude Source="avares://Proba_Sklada/Assets/Icons.axaml" />
-    </Application.Resources>
+    <ResourceDictionary>
+        <ResourceDictionary.MergedDictionaries>
+            <ResourceInclude Source="avares://Proba_Sklada/Assets/Icons.axaml" />
+        </ResourceDictionary.MergedDictionaries>
+    </ResourceDictionary>
+</Application.Resources>
 </Application>

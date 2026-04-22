@@ -50,7 +50,6 @@ public partial class dbBaza : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        // Prefer DI (AddDbContext). Fallback to environment variable for legacy/new() call sites.
         if (optionsBuilder.IsConfigured) return;
 
         var cs = Environment.GetEnvironmentVariable("ConnectionStrings__dbBaza")

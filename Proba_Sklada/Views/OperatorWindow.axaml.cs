@@ -25,16 +25,40 @@ namespace Inventori_Manager
         public OperatorWindow(user us)
         {
             InitializeComponent();
-            //FioBox.Text = $"{us.username}";
+            IntroBox.Text = $"Оператор — {us.full_name}";
             _user = us;
             DataContext = new InventoryViewModel(App.Services.GetRequiredService<dbBaza>(), us);
+            Get();
+        }
+
+        private async void Button_Click(object e, RoutedEventArgs er)
+        {
             Get();
         }
 
         private void Get()
         {
             var db = App.Services.GetRequiredService<dbBaza>();
-            List<inventory> inv = db.inventories.Include(e => e.location).Include(e => e.product).ToList();
+            var inv = db.inventories.Include(e => e.location).Include(e => e.product).ToList().AsEnumerable(); ;
+
+            #region Фильтры 
+            if (ProductsBox.SelectedIndex > -1)
+                inv = inv.Where(i => i.product.name == ProductsBox.SelectedValue.ToString());
+
+            if (LocationBox.SelectedIndex > -1)
+                inv = inv.Where(i => i.location.location_code == LocationBox.SelectedValue.ToString());
+
+            if (!string.IsNullOrWhiteSpace(BatchBox.Text))
+            {
+                string filter = BatchBox.Text.Trim();
+                inv = inv.Where(i =>
+                    (i.batch_number != null && i.batch_number.Contains(filter) ||
+                    (i.serial_number != null && i.serial_number.Contains(filter))));
+            }
+
+            if (PositiveBox.IsChecked == true)
+                inv = inv.Where(i => i.kolichestvo > 0);
+            #endregion
 
             InventoryBox.ItemsSource = inv;
         }
@@ -57,6 +81,15 @@ namespace Inventori_Manager
                     db.inventories.Remove(d);
                 }
             }
+        }
+
+        private void ResetFilter()
+        {
+            ProductsBox.SelectedValue = null;
+            LocationBox = null;
+            BatchBox.Text = string.Empty;
+            PositiveBox.IsChecked = true;
+            Get();
         }
     }
 }

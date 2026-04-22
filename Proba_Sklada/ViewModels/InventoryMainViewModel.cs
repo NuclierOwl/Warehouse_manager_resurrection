@@ -259,7 +259,7 @@ namespace Inventori_Manager.ViewModels
                 ProductId = SelectedProduct.id,
                 ProductName = SelectedProduct.name,
                 Quantity = Quantity,
-                UnitPrice = 0, // добавить поле цены
+                UnitPrice = 0,
                 TotalPrice = 0,
                 LocationId = SelectedLocation.id,
                 LocationCode = SelectedLocation.location_code,
