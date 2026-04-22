@@ -168,6 +168,128 @@
                     </ListBox>
                 </Grid>
             </TabItem>
+
+                <!-- Вкладка «Категории» -->
+<TabItem Header="Категории">
+    <Grid Margin="6">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
+        <StackPanel Grid.Row="0" 
+                    Orientation="Horizontal" 
+                    HorizontalAlignment="Right"
+                    Margin="0,0,0,10">
+            <Button Name="AddCategoryButton" 
+                    Content="Добавить категорию" 
+                    Margin="0,0,10,0"
+                    Click="AddCategoryButton_Click"/>
+            <Button Name="EditCategoryButton" 
+                    Content="Изменить" 
+                    Margin="0,0,10,0"
+                    Click="EditCategoryButton_Click"/>
+            <Button Name="DeleteCategoryButton" 
+                    Content="Удалить" 
+                    Margin="0,0,10,0"
+                    Click="DeleteCategoryButton_Click"/>
+            <Button Name="RefreshCategoriesButton" 
+                    Content="Обновить" 
+                    Click="RefreshCategoriesButton_Click"/>
+        </StackPanel>
+        
+        <ListBox Grid.Row="1" 
+                 Name="CategoriesListBox"
+                 ScrollViewer.VerticalScrollBarVisibility="Auto">
+            <ListBox.ItemTemplate>
+                <DataTemplate x:DataType="dao:product_category">
+                    <Border BorderBrush="LightGray" 
+                            BorderThickness="0,0,0,1" 
+                            Padding="5">
+                        <Grid ColumnDefinitions="50,200,150,300">
+                            <TextBlock Grid.Column="0" 
+                                       Text="{Binding id}"
+                                       VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="1" 
+                                       Text="{Binding name}"
+                                       VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="2" 
+                                       Text="{Binding parent.name}"
+                                       VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="3" 
+                                       Text="{Binding description}"
+                                       VerticalAlignment="Center"/>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </Grid>
+</TabItem>
+
+<!-- Вкладка «Товары» -->
+<TabItem Header="Товары">
+    <Grid Margin="6">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
+        <StackPanel Grid.Row="0" 
+                    Orientation="Horizontal" 
+                    HorizontalAlignment="Right"
+                    Margin="0,0,0,10">
+            <Button Name="AddProductButton" 
+                    Content="Добавить товар" 
+                    Margin="0,0,10,0"
+                    Click="AddProductButton_Click"/>
+            <Button Name="EditProductButton" 
+                    Content="Изменить" 
+                    Margin="0,0,10,0"
+                    Click="EditProductButton_Click"/>
+            <Button Name="DeleteProductButton" 
+                    Content="Удалить" 
+                    Click="DeleteProductButton_Click"/>
+            <Button Name="RefreshProductsButton" 
+                    Content="Обновить" 
+                    Click="RefreshProductsButton_Click"/>
+        </StackPanel>
+        
+        <ListBox Grid.Row="1" 
+                 Name="ProductsListBox"
+                 ScrollViewer.VerticalScrollBarVisibility="Auto">
+            <ListBox.ItemTemplate>
+                <DataTemplate x:DataType="dao:product">
+                    <Border BorderBrush="LightGray" 
+                            BorderThickness="0,0,0,1" 
+                            Padding="5">
+                        <Grid ColumnDefinitions="80,150,120,100,100,100">
+                            <TextBlock Grid.Column="0" 
+                                       Text="{Binding sku}"
+                                       VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="1" 
+                                       Text="{Binding name}"
+                                       VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="2" 
+                                       Text="{Binding category.name}"
+                                       VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="3" 
+                                       Text="{Binding unit.short_name}"
+                                       VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="4" 
+                                       Text="{Binding purchase_price, StringFormat=\{0:N2\}}"
+                                       VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="5" 
+                                       Text="{Binding selling_price, StringFormat=\{0:N2\}}"
+                                       VerticalAlignment="Center"/>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </Grid>
+</TabItem>
+
             </TabControl>
         </Border>
     </Grid>

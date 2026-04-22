@@ -69,6 +69,18 @@ namespace Inventori_Manager
             loginWindow.Show();
             this.Close();
         }
+        private void Obnovka_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            Get();
+        }
+
+        private void Obnovka_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            Get();
+        }
+
+
+
         private void Cheaker()
         {
             var db = App.Services.GetRequiredService<dbBaza>();

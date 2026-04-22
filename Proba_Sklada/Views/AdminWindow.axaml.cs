@@ -36,16 +36,28 @@ public partial class AdminWindow : Window
         Get();
         LoadUsersForEditing();
         LoadUnits();
+        LoadCategories();
+        LoadProducts();
+    }
+    private void Loader()
+    {
+        Get();
+        LoadUsersForEditing();
+        LoadUnits();
+        LoadCategories();
+        LoadProducts();
     }
 
     private void SelectionChanged(object o, SelectionChangedEventArgs e)
     {
         Get();
+        Loader();
     }
 
     private void TextChanged(object o, TextChangedEventArgs e)
     {
         Get();
+        Loader();
     }
 
     private void Get()
@@ -492,13 +504,6 @@ public partial class AdminWindow : Window
         return await tcs.Task;
     }
 
-    private void RefreshProductsButton_Click(object sender, RoutedEventArgs e)
-    {
-        
-        LoadUnits();
-        
-    }
-
     private async void AddCategoryButton_Click(object sender, RoutedEventArgs e)
     {
         
@@ -562,8 +567,170 @@ public partial class AdminWindow : Window
 
         await dialog.ShowDialog(this);
     }
+
+
+    #region Торары и категории
+    private async void AddProductButton_Click(object sender, RoutedEventArgs e)
+    {
+        var model = await ShowProductDialogAsync(null);
+        if (model == null) return;
+
+        var db = App.Services.GetRequiredService<dbBaza>();
+        db.products.Add(new product
+        {
+            sku = model.sku,
+            name = model.name,
+            description = model.description,
+            category_id = model.category_id,
+            unit_id = model.unit_id,
+            purchase_price = model.purchase_price,
+            selling_price = model.selling_price,
+            min_stock_level = model.min_stock_level,
+            max_stock_level = model.max_stock_level,
+            barcode = model.barcode,
+            is_active = model.is_active
+        });
+        await db.SaveChangesAsync();
+        LoadProducts();
+    }
+
+    private async void EditProductButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (ProductsListBox.SelectedItem is not product selected)
+        {
+            await ShowNotificationDialog("Выберите товар для редактирования.");
+            return;
+        }
+        var db = App.Services.GetRequiredService<dbBaza>();
+        var existing = db.products.FirstOrDefault(p => p.id == selected.id);
+        if (existing == null)
+        {
+            await ShowNotificationDialog("Товар не найден.");
+            return;
+        }
+        var model = await ShowProductDialogAsync(existing);
+        if (model == null) return;
+
+        existing.sku = model.sku;
+        existing.name = model.name;
+        existing.description = model.description;
+        existing.category_id = model.category_id;
+        existing.unit_id = model.unit_id;
+        existing.purchase_price = model.purchase_price;
+        existing.selling_price = model.selling_price;
+        existing.min_stock_level = model.min_stock_level;
+        existing.max_stock_level = model.max_stock_level;
+        existing.barcode = model.barcode;
+        existing.is_active = model.is_active;
+        await db.SaveChangesAsync();
+        LoadProducts();
+    }
+
+    private async void DeleteProductButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (ProductsListBox.SelectedItem is not product selected)
+        {
+            await ShowNotificationDialog("Выберите товар для удаления.");
+            return;
+        }
+        if (!await ConfirmAsync("Удаление товара", "Вы действительно хотите удалить выбранный товар?"))
+            return;
+
+        var db = App.Services.GetRequiredService<dbBaza>();
+        var product = db.products.FirstOrDefault(p => p.id == selected.id);
+        if (product != null)
+        {
+            db.products.Remove(product);
+            await db.SaveChangesAsync();
+            LoadProducts();
+        }
+    }
+
+    private void RefreshProductsButton_Click(object sender, RoutedEventArgs e)
+    {
+        LoadUnits();
+        LoadProducts();
+    }
+
+    private async void EditCategoryButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (CategoriesListBox.SelectedItem is not product_category selected)
+        {
+            await ShowNotificationDialog("Выберите категорию для редактирования.");
+            return;
+        }
+        var db = App.Services.GetRequiredService<dbBaza>();
+        var existing = db.product_categories.FirstOrDefault(c => c.id == selected.id);
+        if (existing == null)
+        {
+            await ShowNotificationDialog("Категория не найдена.");
+            return;
+        }
+        var model = await ShowCategoryDialogAsync(existing);
+        if (model == null) return;
+
+        existing.name = model.name;
+        existing.description = model.description;
+        existing.parent_id = model.parent_id;
+        await db.SaveChangesAsync();
+        LoadCategories();
+        Loader();
+    }
+
+    private async void DeleteCategoryButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (CategoriesListBox.SelectedItem is not product_category selected)
+        {
+            await ShowNotificationDialog("Выберите категорию для удаления.");
+            return;
+        }
+        if (!await ConfirmAsync("Удаление категории", "Вы действительно хотите удалить выбранную категорию?"))
+            return;
+
+        var db = App.Services.GetRequiredService<dbBaza>();
+        var category = db.product_categories.FirstOrDefault(c => c.id == selected.id);
+        if (category != null)
+        {
+            db.product_categories.Remove(category);
+            await db.SaveChangesAsync();
+            LoadCategories();
+        }
+    }
+
+    private void RefreshCategoriesButton_Click(object sender, RoutedEventArgs e)
+    {
+        LoadCategories();
+    }
+
+    private void LoadCategories()
+    {
+        var db = App.Services.GetRequiredService<dbBaza>();
+        var items = db.product_categories
+            .Include(c => c.parent)
+            .OrderBy(c => c.name)
+            .ToList();
+        _categories.Clear();
+        foreach (var c in items) _categories.Add(c);
+        CategoriesListBox.ItemsSource = _categories;
+    }
+
+    private void LoadProducts()
+    {
+        var db = App.Services.GetRequiredService<dbBaza>();
+        var items = db.products
+            .Include(p => p.category)
+            .Include(p => p.unit)
+            .OrderBy(p => p.name)
+            .ToList();
+        _products.Clear();
+        foreach (var p in items) _products.Add(p);
+        ProductsListBox.ItemsSource = _products;
+    }
+    #endregion
+
+
     private void ShowNotification(string message)
     {
         Console.WriteLine($"Notification: {message}");
     }
-}
+} 

@@ -43,7 +43,7 @@ public partial class LoginWindow : Window
             {
                 if (userok.is_active == true)
                 {
-                    switch (userok.role)
+                    switch (userok.role.ToLower())
                     {
                         case ("operator"):
                             next = new OperatorWindow(userok);
