@@ -7,7 +7,7 @@
         mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="800"
         x:Class="Inventori_Manager.MenegerWindow"
         x:DataType="vm:MenegerViewModel"
-        Title="??????????">
+        Title="Менеджер склада">
   <Grid RowDefinitions="Auto,*" Margin="{DynamicResource DashPagePadding}">
       <Border Grid.Row="0" Classes="Card" Padding="14">
           <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
@@ -16,42 +16,42 @@
                             Width="18"
                             Height="18"
                             Foreground="{DynamicResource DashAccentBrush}" />
-                  <TextBlock Classes="H2" Text="????????" />
+                  <TextBlock Classes="H2" Text="Менеджер склада" />
               </StackPanel>
 
               <DockPanel Grid.Column="1" LastChildFill="True">
                   <ComboBox Name="ComboFilter" Width="170" Margin="0,0,10,0" SelectionChanged="SelectionChanged">
-                      <ComboBoxItem>???</ComboBoxItem>
-                      <ComboBoxItem>?? ????????</ComboBoxItem>
-                      <ComboBoxItem>?? ???????????</ComboBoxItem>
+                      <ComboBoxItem>Все</ComboBoxItem>
+                      <ComboBoxItem>По убыванию</ComboBoxItem>
+                      <ComboBoxItem>По возрастанию</ComboBoxItem>
                   </ComboBox>
-                  <TextBox Name="SerchBox" Watermark="?????..." TextChanged="TextChanged"/>
+                  <TextBox Name="SerchBox" Watermark="Поиск..." TextChanged="TextChanged"/>
               </DockPanel>
 
               <Button Grid.Column="2"
                       Name="ExitButton"
-                      Content="?????"
+                      Content="Выйти"
                       Click="ExitButton_Click"/>
           </Grid>
       </Border>
 
       <Border Grid.Row="1" Classes="Card" Margin="0,14,0,0" Padding="12">
       <TabControl>
-          <TabItem Header="??????????">
+          <TabItem Header="Статистика">
           </TabItem>
-          <TabItem Header="??????????">
+          <TabItem Header="Приход товаров">
               <Grid RowDefinitions="Auto,*" Margin="12">
                   <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
                       <StackPanel>
-                          <TextBlock Text="?????? ?" Margin="0,0,0,4"/>
+                          <TextBlock Text="Начальная дата" Margin="0,0,0,4"/>
                           <DatePicker SelectedDate="{Binding StartDate}" Width="160"/>
                       </StackPanel>
                       <StackPanel>
-                          <TextBlock Text="??" Margin="0,0,0,4"/>
+                          <TextBlock Text="Конечная дата" Margin="0,0,0,4"/>
                           <DatePicker SelectedDate="{Binding EndDate}" Width="160"/>
                       </StackPanel>
                       <StackPanel>
-                          <TextBlock Text="???????????" Margin="0,0,0,4"/>
+                          <TextBlock Text="Группировка" Margin="0,0,0,4"/>
                           <ComboBox ItemsSource="{Binding GroupingOptions}"
                                     SelectedItem="{Binding SelectedGrouping}"
                                     Width="160"/>
@@ -60,7 +60,7 @@
 
                   <Border Grid.Row="1" Margin="0,12,0,0" CornerRadius="10" BorderThickness="1" BorderBrush="{DynamicResource DashBorderBrush}" Background="{DynamicResource DashSurfaceBrush}">
                       <Grid RowDefinitions="Auto,*" Margin="12">
-                          <TextBlock Grid.Row="0" Text="????????? / ?????????" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                          <TextBlock Grid.Row="0" Text="Приход / Расход товаров" FontWeight="SemiBold" Margin="0,0,0,8"/>
                           <lvc:CartesianChart Grid.Row="1"
                                              Series="{Binding MovementSeries}"
                                              XAxes="{Binding XAxes}"
