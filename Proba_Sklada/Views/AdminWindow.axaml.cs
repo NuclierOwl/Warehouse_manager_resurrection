@@ -708,6 +708,7 @@ public partial class AdminWindow : Window
         var items = db.product_categories
             .Include(c => c.parent)
             .OrderBy(c => c.name)
+            .OrderBy(e => e.id)
             .ToList();
         _categories.Clear();
         foreach (var c in items) _categories.Add(c);
@@ -721,6 +722,7 @@ public partial class AdminWindow : Window
             .Include(p => p.category)
             .Include(p => p.unit)
             .OrderBy(p => p.name)
+            .OrderBy(e=> e.id)
             .ToList();
         _products.Clear();
         foreach (var p in items) _products.Add(p);
