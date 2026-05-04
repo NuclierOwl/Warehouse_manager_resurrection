@@ -707,7 +707,6 @@ public partial class AdminWindow : Window
         var db = App.Services.GetRequiredService<dbBaza>();
         var items = db.product_categories
             .Include(c => c.parent)
-            .OrderBy(c => c.name)
             .OrderBy(e => e.id)
             .ToList();
         _categories.Clear();
@@ -721,7 +720,6 @@ public partial class AdminWindow : Window
         var items = db.products
             .Include(p => p.category)
             .Include(p => p.unit)
-            .OrderBy(p => p.name)
             .OrderBy(e=> e.id)
             .ToList();
         _products.Clear();
