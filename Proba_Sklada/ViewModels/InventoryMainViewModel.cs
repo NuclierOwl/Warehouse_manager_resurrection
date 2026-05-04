@@ -433,9 +433,16 @@ namespace Inventori_Manager.ViewModels
                 discrepancy_reason = null,
                 resolved = false,
             };
-            _context.inventory_discrepancies.Add(discrepancy);
-            await _context.SaveChangesAsync();
-
+            try
+            {
+                _context.inventory_discrepancies.Add(discrepancy);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                _context.ChangeTracker.Clear();
+                MessageBoxManager.GetMessageBoxStandard("Ошибка при сохранении информации", ex.ToString(), MsBox.Avalonia.Enums.ButtonEnum.Ok);
+            }
             Discrepancies.Add(new DiscrepancyModel
             {
                 ProductName = SelectedProductInv.name,
@@ -521,6 +528,7 @@ namespace Inventori_Manager.ViewModels
                         _context.schet_faktura_soderzanies.Add(expenseItem);
 
                         var inventoryItem = await _context.inventories
+                            .AsNoTracking()
                             .FirstOrDefaultAsync(i => i.product_id == item.ProductId && i.location_id == item.LocationId);
                         if (inventoryItem != null)
                         {
@@ -541,7 +549,8 @@ namespace Inventori_Manager.ViewModels
                 catch (Exception ex)
                 {
                     await transaction.RollbackAsync();
-                    //MessageBoxManager.GetMessageBoxStandard("Ошибка при сохранении расходной накладной", ex.ToString(), MsBox.Avalonia.Enums.ButtonEnum.Ok);
+                    _context.ChangeTracker.Clear();
+                   await MessageBoxManager.GetMessageBoxStandard("Ошибка при сохранении расходной накладной", ex.ToString(), MsBox.Avalonia.Enums.ButtonEnum.Ok).ShowAsync();
                 }
             }
         }

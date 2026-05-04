@@ -1,5 +1,6 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Interactivity;
 using Microsoft.Extensions.DependencyInjection;
 using MsBox.Avalonia;
@@ -18,6 +19,12 @@ public partial class LoginWindow : Window
     public LoginWindow()
     {
         InitializeComponent();
+        UserPass.KeyDown += OnWindowKeyDown;
+    }
+
+    private void OnWindowKeyDown(object? sender, KeyEventArgs e)
+    {
+        if (e.Key == Key.Enter) KnopkaWhoda_Click(this, new RoutedEventArgs());
     }
 
     private void KnopkaTest_Click(object? sender, RoutedEventArgs e)
