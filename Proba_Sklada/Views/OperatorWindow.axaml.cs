@@ -79,7 +79,19 @@ namespace Inventori_Manager
             Get();
         }
 
+        private void Obnovka_CheckBox_Changed(object sender, RoutedEventArgs e)
+        {
+            Get();
+        }
 
+        private void ResetFilter_Click(object sender, RoutedEventArgs e)
+        {
+            ProductsBox.SelectedIndex = -1;
+            LocationBox.SelectedIndex = -1;
+            BatchBox.Text = string.Empty;
+            PositiveBox.IsChecked = true;
+            Get();
+        }
 
         private void Cheaker()
         {

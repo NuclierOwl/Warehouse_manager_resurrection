@@ -197,54 +197,52 @@
                 <ComboBox Grid.Row="0" Grid.Column="1" 
                           ItemsSource="{Binding Products}" 
                           DisplayMemberBinding="{Binding name}" 
-                          SelectedItem="{Binding FilterProduct}"
                           Name="ProductsBox"
-                          MinWidth="150"/>
+                          MinWidth="150"
+                          SelectionChanged="Obnovka_SelectionChanged"/>
 
                 <TextBlock Grid.Row="0" Grid.Column="2" Text="Место хранения:" VerticalAlignment="Center"/>
                 <ComboBox Grid.Row="0" Grid.Column="3" 
                           ItemsSource="{Binding StorageLocations}" 
                           DisplayMemberBinding="{Binding location_code}" 
-                          SelectedItem="{Binding FilterLocation}"
                           Name="LocationBox"
-                          MinWidth="150"/>
+                          MinWidth="150"
+                          SelectionChanged="Obnovka_SelectionChanged"/>
 
                 <TextBlock Grid.Row="0" Grid.Column="4" Text="Партия / серийный номер:" VerticalAlignment="Center"/>
-                <TextBox Grid.Row="0" Grid.Column="5" Text="{Binding FilterBatchNumber, UpdateSourceTrigger=PropertyChanged}"
-                         Name="BatchBox" MinWidth="150"/>
-
-                <Button Grid.Row="0" Grid.Column="6" Content="Применить" 
-                        Command="{Binding ApplyFilterCommand}"
-                        Click="Button_Click"
-                        HorizontalAlignment="Stretch"/>
+                <TextBox Grid.Row="0" Grid.Column="5" 
+                         Name="BatchBox" MinWidth="150"
+                         TextChanged="Obnovka_TextChanged"/>
 
                 <TextBlock Grid.Row="1" Grid.Column="0" Text="Кол-во > 0:" VerticalAlignment="Center"/>
                 <CheckBox Grid.Row="1" Grid.Column="1" Name="PositiveBox"
-                          IsChecked="{Binding FilterOnlyPositiveQuantity}"
-                          VerticalAlignment="Center" Margin="0,0,0,0"/>
+                          VerticalAlignment="Center" Margin="0,0,0,0"
+                          Click="Obnovka_CheckBox_Changed"/>
+
                 <Button Grid.Row="1" Grid.Column="6" Content="Сбросить фильтр" 
-                        Command="{Binding ResetFilterCommand}"
+                        Click="ResetFilter_Click"
                         HorizontalAlignment="Stretch"/>
             </Grid>
         </Border>
+
         <ListBox Grid.Row="2" Name="InventoryBox" Margin="5">
-    <ListBox.ItemTemplate>
-        <DataTemplate x:DataType="dao:inventory">
-            <Border BorderBrush="LightGray" BorderThickness="0,0,0,1" Padding="5">
-                <StackPanel Orientation="Horizontal" Spacing="10">
-                    <TextBlock Text="{Binding product.name}" MinWidth="150" />
-                    <TextBlock Text="{Binding location.location_code}" MinWidth="100" />
-                    <TextBlock Text="{Binding kolichestvo}" MinWidth="60" />
-                    <TextBlock Text="{Binding batch_number}" MinWidth="100" />
-                    <TextBlock Text="{Binding serial_number}" MinWidth="120" />
-                    <TextBlock Text="{Binding production_date, StringFormat='yyyy-MM-dd'}" MinWidth="100" />
-                    <TextBlock Text="{Binding spisanie_date, StringFormat='yyyy-MM-dd'}" MinWidth="100" />
-                    <TextBlock Text="{Binding last_updated, StringFormat='yyyy-MM-dd HH:mm'}" MinWidth="140" />
-                </StackPanel>
-            </Border>
-        </DataTemplate>
-    </ListBox.ItemTemplate>
-</ListBox>
+            <ListBox.ItemTemplate>
+                <DataTemplate x:DataType="dao:inventory">
+                    <Border BorderBrush="LightGray" BorderThickness="0,0,0,1" Padding="5">
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <TextBlock Text="{Binding product.name}" MinWidth="150" />
+                            <TextBlock Text="{Binding location.location_code}" MinWidth="100" />
+                            <TextBlock Text="{Binding kolichestvo}" MinWidth="60" />
+                            <TextBlock Text="{Binding batch_number}" MinWidth="100" />
+                            <TextBlock Text="{Binding serial_number}" MinWidth="120" />
+                            <TextBlock Text="{Binding production_date, StringFormat='yyyy-MM-dd'}" MinWidth="100" />
+                            <TextBlock Text="{Binding spisanie_date, StringFormat='yyyy-MM-dd'}" MinWidth="100" />
+                            <TextBlock Text="{Binding last_updated, StringFormat='yyyy-MM-dd HH:mm'}" MinWidth="140" />
+                        </StackPanel>
+                    </Border>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
     </Grid>
 </TabItem>
             </TabControl>

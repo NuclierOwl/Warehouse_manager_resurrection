@@ -541,8 +541,7 @@ namespace Inventori_Manager.ViewModels
                 catch (Exception ex)
                 {
                     await transaction.RollbackAsync();
-                    MessageBoxManager.GetMessageBoxStandard("Ошибка при сохранении расходной накладной", ex.ToString(), MsBox.Avalonia.Enums.ButtonEnum.Ok);
-                    throw;
+                    //MessageBoxManager.GetMessageBoxStandard("Ошибка при сохранении расходной накладной", ex.ToString(), MsBox.Avalonia.Enums.ButtonEnum.Ok);
                 }
             }
         }
