@@ -18,7 +18,7 @@ namespace Inventori_Manager;
 
 public partial class AdminWindow : Window
 {
-    // ќќќќќќќ ќќќ ќќќќќќќќќќќќ ќќќќќќќќќќ ќќќќќќќќќќќќќ
+    // Словарь изменённых пользователей
     private Dictionary<int, user> modifiedUsers = new Dictionary<int, user>();
 
     private readonly ObservableCollection<product_category> _categories = new();
@@ -97,7 +97,7 @@ public partial class AdminWindow : Window
         UsersListBox.ItemsSource = users;
     }
 
-    // ќќќќќќќќќќ ќќќќќќќќќ ќќќќ ќ Control Manager
+    // Изменение роли через Control Manager
     private void RoleComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         if (sender is ComboBox comboBox && comboBox.DataContext is user selectedUser)
@@ -109,11 +109,11 @@ public partial class AdminWindow : Window
                 userToUpdate.role = comboBox.SelectedItem?.ToString();
                 db.SaveChanges();
 
-                // ќќќќќќќќќ ќќќќќќ ќ Control Manager
+                // Обновляем список в Control Manager
                 Get();
 
-                // ќќќќќќќќќќ ќќќќќќќќќќќ ќќ ќќќќќќќќ ќќќќќќќќќ
-                ShowNotification($"ќќќќ ќќќќќќќќќќќќ {selectedUser.full_name} ќќќќќќќќ ќќ {userToUpdate.role}");
+                // Уведомление об изменении роли
+                ShowNotification($"Роль пользователя {selectedUser.full_name} изменена на {userToUpdate.role}");
             }
         }
     }
@@ -136,7 +136,7 @@ public partial class AdminWindow : Window
 
         LoadUsersForEditing();
 
-        await ShowNotificationDialog("ќќќќќ ќќќќќќќќќќќќ ќќќќќќќќ. ќќќќќќ ќќ ќќќќќќќќќ: 123456");
+        await ShowNotificationDialog("Добавлен новый пользователь. Пароль по умолчанию: 123456");
     }
 
     private async void SaveUserButton_Click(object sender, RoutedEventArgs e)
@@ -147,13 +147,13 @@ public partial class AdminWindow : Window
             var userToUpdate = db.users.FirstOrDefault(u => u.id == userId);
             if (userToUpdate != null)
             {
-                // ќќќќќќќ ќќќќќќќ ќ ListBox
+                // Данные из ListBox
                 if (UsersListBox.Items is IEnumerable<user> users)
                 {
                     var editedUser = users.FirstOrDefault(u => u.id == userId);
                     if (editedUser != null)
                     {
-                        // ќќќќќќќќќ ќќќќќќ
+                        // Сохраняем изменения
                         userToUpdate.username = editedUser.username;
                         userToUpdate.full_name = editedUser.full_name;
                         userToUpdate.email = editedUser.email;
@@ -162,26 +162,26 @@ public partial class AdminWindow : Window
 
                         db.SaveChanges();
 
-                        // ќќќќќќќќќ ќќќ ќќќќќќ
+                        // Обновить оба списка
                         Get();
                         LoadUsersForEditing();
 
-                        await ShowNotificationDialog($"ќќќќќќќќќќќќ {editedUser.full_name} ќќќќќќќ ќќќќќќќќ");
+                        await ShowNotificationDialog($"Пользователь {editedUser.full_name} успешно сохранён");
                     }
                 }
             }
         }
     }
 
-    // ќќќќќќќќќќ ќќќќќќќќ ќќќќќќќќќќќќ
+    // Подтверждение удаления пользователя
     private async void DeleteUserButton_Click(object sender, RoutedEventArgs e)
     {
         if (sender is Button button && button.Tag is int userId)
         {
-            // ќќќќќќќќќќќќќ ќќќќќќќќ
+            // Диалог подтверждения
             var dialog = new Window()
             {
-                Title = "ќќќќќќќќќќќќќ ќќќќќќќќ",
+                Title = "Подтверждение удаления",
                 Width = 300,
                 Height = 150,
                 WindowStartupLocation = WindowStartupLocation.CenterOwner
@@ -195,7 +195,7 @@ public partial class AdminWindow : Window
 
             panel.Children.Add(new TextBlock
             {
-                Text = "ќќ ќќќќќќќ, ќќќ ќќќќќќ ќќќќќќќ ќќќќќ ќќќќќќќќќќќќ?",
+                Text = "Вы уверены, что хотите удалить этого пользователя?",
                 TextWrapping = TextWrapping.Wrap
             });
 
@@ -206,8 +206,8 @@ public partial class AdminWindow : Window
                 Spacing = 10
             };
 
-            var yesButton = new Button { Content = "ќќ", Width = 80 };
-            var noButton = new Button { Content = "ќќќ", Width = 80 };
+            var yesButton = new Button { Content = "Да", Width = 80 };
+            var noButton = new Button { Content = "Нет", Width = 80 };
 
             yesButton.Click += async (s, args) =>
             {
@@ -215,13 +215,13 @@ public partial class AdminWindow : Window
                 var userToDelete = db.users.FirstOrDefault(u => u.id == userId);
                 if (userToDelete != null)
                 {
-                    // ќќќќќќќќќ, ќќ ќќќќќќќќ ќќ ќќќ ќќќќќќќќќ ќќќќќќќќќќќќќќќ
+                    // Проверяем, не удаляем ли последнего администратора
                     if (userToDelete.role == "admin")
                     {
                         var adminCount = db.users.Count(u => u.role == "admin");
                         if (adminCount <= 1)
                         {
-                            await ShowNotificationDialog("ќќќќќќќќќќ ќќќќќќќ ќќќќќќќќќќ ќќќќќќќќќќќќќќ!");
+                            await ShowNotificationDialog("Нельзя удалить последнего администратора!");
                             dialog.Close();
                             return;
                         }
@@ -230,11 +230,11 @@ public partial class AdminWindow : Window
                     db.users.Remove(userToDelete);
                     db.SaveChanges();
 
-                    // ќќќќќќќќќ ќќќ ќќќќќќ
+                    // Обновить оба списка
                     Get();
                     LoadUsersForEditing();
 
-                    await ShowNotificationDialog($"ќќќќќќќќќќќќ {userToDelete.full_name} ќќќќќќ");
+                    await ShowNotificationDialog($"Пользователь {userToDelete.full_name} удалён");
                     dialog.Close();
                 }
             };
@@ -250,7 +250,7 @@ public partial class AdminWindow : Window
         }
     }
 
-    // ќќќќќќќќќќ ќќќќќќќќќќ ќќќќќќ
+    // Кнопка обновления пользователей
     private void RefreshButton_Click(object sender, RoutedEventArgs e)
     {
         Get();
@@ -294,8 +294,8 @@ public partial class AdminWindow : Window
             Spacing = 8
         };
 
-        var ok = new Button { Content = "??", Width = 90 };
-        var cancel = new Button { Content = "???", Width = 90 };
+        var ok = new Button { Content = "Да", Width = 90 };
+        var cancel = new Button { Content = "Отмена", Width = 90 };
 
         var tcs = new TaskCompletionSource<bool>();
         ok.Click += (_, __) => { tcs.TrySetResult(true); dialog.Close(); };
@@ -314,15 +314,15 @@ public partial class AdminWindow : Window
     {
         var dialog = new Window
         {
-            Title = existing == null ? "????? ?????????" : "?????????????? ?????????",
+            Title = existing == null ? "Новая категория" : "Редактирование категории",
             Width = 520,
             Height = 300,
             WindowStartupLocation = WindowStartupLocation.CenterOwner
         };
 
-        var nameBox = new TextBox { Watermark = "????????", Text = existing?.name ?? "" };
-        var parentBox = new ComboBox { PlaceholderText = "???????????? ????????? (?????????????)" };
-        var descBox = new TextBox { Watermark = "????????", Text = existing?.description ?? "", AcceptsReturn = true, Height = 90 };
+        var nameBox = new TextBox { Watermark = "Название", Text = existing?.name ?? "" };
+        var parentBox = new ComboBox { PlaceholderText = "Родительская категория (необязательно)" };
+        var descBox = new TextBox { Watermark = "Описание", Text = existing?.description ?? "", AcceptsReturn = true, Height = 90 };
 
         var parentChoices = _categories
             .Where(c => existing == null || c.id != existing.id)
@@ -333,8 +333,8 @@ public partial class AdminWindow : Window
         if (existing?.parent_id != null)
             parentBox.SelectedItem = parentChoices.FirstOrDefault(c => c.id == existing.parent_id);
 
-        var okBtn = new Button { Content = "?????????", Width = 120 };
-        var cancelBtn = new Button { Content = "??????", Width = 120 };
+        var okBtn = new Button { Content = "Сохранить", Width = 120 };
+        var cancelBtn = new Button { Content = "Отмена", Width = 120 };
         var tcs = new TaskCompletionSource<product_category?>();
 
         okBtn.Click += async (_, __) =>
@@ -342,7 +342,7 @@ public partial class AdminWindow : Window
             var name = (nameBox.Text ?? "").Trim();
             if (string.IsNullOrWhiteSpace(name))
             {
-                await ShowNotificationDialog("??????? ???????? ?????????.");
+                await ShowNotificationDialog("Введите название категории.");
                 return;
             }
 
@@ -388,23 +388,23 @@ public partial class AdminWindow : Window
     {
         var dialog = new Window
         {
-            Title = existing == null ? "????? ?????" : "?????????????? ??????",
+            Title = existing == null ? "Новый товар" : "Редактирование товара",
             Width = 640,
             Height = 520,
             WindowStartupLocation = WindowStartupLocation.CenterOwner
         };
 
         var skuBox = new TextBox { Watermark = "SKU", Text = existing?.sku ?? "" };
-        var nameBox = new TextBox { Watermark = "????????", Text = existing?.name ?? "" };
-        var categoryBox = new ComboBox { PlaceholderText = "????????? (?????????????)" };
-        var unitBox = new ComboBox { PlaceholderText = "??.??? (???????????)" };
-        var barcodeBox = new TextBox { Watermark = "????????", Text = existing?.barcode ?? "" };
-        var purchasePriceBox = new TextBox { Watermark = "?????????? ???? (???????? 12.50)", Text = existing?.purchase_price?.ToString() ?? "" };
-        var sellingPriceBox = new TextBox { Watermark = "???? ??????? (???????? 15.00)", Text = existing?.selling_price?.ToString() ?? "" };
-        var minBox = new TextBox { Watermark = "???.???????", Text = existing?.min_stock_level?.ToString() ?? "" };
-        var maxBox = new TextBox { Watermark = "????.???????", Text = existing?.max_stock_level?.ToString() ?? "" };
-        var isActiveBox = new CheckBox { Content = "???????", IsChecked = existing?.is_active ?? true };
-        var descBox = new TextBox { Watermark = "????????", Text = existing?.description ?? "", AcceptsReturn = true, Height = 90 };
+        var nameBox = new TextBox { Watermark = "Название", Text = existing?.name ?? "" };
+        var categoryBox = new ComboBox { PlaceholderText = "Категория (необязательно)" };
+        var unitBox = new ComboBox { PlaceholderText = "Ед.изм. (обязательно)" };
+        var barcodeBox = new TextBox { Watermark = "Штрихкод", Text = existing?.barcode ?? "" };
+        var purchasePriceBox = new TextBox { Watermark = "Закупочная цена (пример 12.50)", Text = existing?.purchase_price?.ToString() ?? "" };
+        var sellingPriceBox = new TextBox { Watermark = "Цена продажи (пример 15.00)", Text = existing?.selling_price?.ToString() ?? "" };
+        var minBox = new TextBox { Watermark = "Мин.остаток", Text = existing?.min_stock_level?.ToString() ?? "" };
+        var maxBox = new TextBox { Watermark = "Макс.остаток", Text = existing?.max_stock_level?.ToString() ?? "" };
+        var isActiveBox = new CheckBox { Content = "Активен", IsChecked = existing?.is_active ?? true };
+        var descBox = new TextBox { Watermark = "Описание", Text = existing?.description ?? "", AcceptsReturn = true, Height = 90 };
 
         categoryBox.ItemsSource = _categories.OrderBy(c => c.name).ToList();
         categoryBox.DisplayMemberBinding = new Avalonia.Data.Binding("name");
@@ -429,8 +429,8 @@ public partial class AdminWindow : Window
             return decimal.TryParse(s, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out var v) ? v : null;
         }
 
-        var okBtn = new Button { Content = "?????????", Width = 120 };
-        var cancelBtn = new Button { Content = "??????", Width = 120 };
+        var okBtn = new Button { Content = "Сохранить", Width = 120 };
+        var cancelBtn = new Button { Content = "Отмена", Width = 120 };
         var tcs = new TaskCompletionSource<product?>();
 
         okBtn.Click += async (_, __) =>
@@ -439,13 +439,13 @@ public partial class AdminWindow : Window
             var name = (nameBox.Text ?? "").Trim();
             if (string.IsNullOrWhiteSpace(sku) || string.IsNullOrWhiteSpace(name))
             {
-                await ShowNotificationDialog("SKU ? ???????? ???????????.");
+                await ShowNotificationDialog("SKU и название обязательны.");
                 return;
             }
 
             if (unitBox.SelectedItem is not unit selectedUnit)
             {
-                await ShowNotificationDialog("???????? ??????? ?????????.");
+                await ShowNotificationDialog("Выберите единицу измерения.");
                 return;
             }
 
@@ -506,7 +506,7 @@ public partial class AdminWindow : Window
 
     private async void AddCategoryButton_Click(object sender, RoutedEventArgs e)
     {
-        
+
         var model = await ShowCategoryDialogAsync(null);
         if (model == null) return;
 
@@ -518,7 +518,7 @@ public partial class AdminWindow : Window
             parent_id = model.parent_id
         });
         await db.SaveChangesAsync();
-        
+
     }
     private string HashPassword(string password)
     {
@@ -534,7 +534,7 @@ public partial class AdminWindow : Window
     {
         var dialog = new Window()
         {
-            Title = "ќќќќќќќќќќќ",
+            Title = "Уведомление",
             Width = 400,
             Height = 100,
             WindowStartupLocation = WindowStartupLocation.CenterOwner
@@ -569,7 +569,7 @@ public partial class AdminWindow : Window
     }
 
 
-    #region Торары и категории
+    #region Товары и категории
     private async void AddProductButton_Click(object sender, RoutedEventArgs e)
     {
         var model = await ShowProductDialogAsync(null);
@@ -720,7 +720,7 @@ public partial class AdminWindow : Window
         var items = db.products
             .Include(p => p.category)
             .Include(p => p.unit)
-            .OrderBy(e=> e.id)
+            .OrderBy(e => e.id)
             .ToList();
         _products.Clear();
         foreach (var p in items) _products.Add(p);
@@ -733,4 +733,4 @@ public partial class AdminWindow : Window
     {
         Console.WriteLine($"Notification: {message}");
     }
-} 
+}
