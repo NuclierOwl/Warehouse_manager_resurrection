@@ -37,10 +37,16 @@
 
       <Border Grid.Row="1" Classes="Card" Margin="0,14,0,0" Padding="12">
       <TabControl>
+
+         <!--
+
           <TabItem Header="Статистика">
           </TabItem>
           <TabItem Header="Приход товаров">
           </TabItem>
+
+          -->
+
           <TabItem Header="Отчёты">
               <Grid RowDefinitions="Auto,*" RowSpacing="10">
                   <Border Classes="Card" Padding="10">

@@ -144,7 +144,7 @@
                                   SelectedItem="{Binding SelectedCustomer}" Margin="5"/>
                         <TextBlock Grid.Column="2" Text="Товар:" VerticalAlignment="Center" Margin="5"/>
                         <ComboBox Grid.Column="3" ItemsSource="{Binding Products}" 
-                                  DisplayMemberBinding="{Binding name}" 
+                                  DisplayMemberBinding="{Binding name}" SelectionChanged="SelectionProd"
                                   SelectedItem="{Binding SelectedProductExp}" Margin="5"/>
                         <TextBlock Grid.Column="4" Text="Количество:" VerticalAlignment="Center" Margin="5"/>
                         <NumericUpDown Grid.Column="5" Value="{Binding ExpenseQuantity}" 
@@ -158,7 +158,7 @@
                                   SelectedItem="{Binding SelectedLocationExp}" Margin="5"/>
                         <TextBlock Grid.Column="2" Text="Цена за единицу:" VerticalAlignment="Center" Margin="5"/>
                         <NumericUpDown Grid.Column="3" Value="{Binding ExpenseUnitPrice}" 
-                                       Minimum="0" FormatString="F2" Margin="5"/>
+                                       Minimum="0" FormatString="F2" Margin="5" Name="CenikBox"/>
                     </Grid>
 
                     <Button Grid.Row="4" Content="Добавить в накладную" 

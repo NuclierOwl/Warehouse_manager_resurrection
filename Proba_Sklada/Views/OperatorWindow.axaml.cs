@@ -3,12 +3,14 @@ using Avalonia.Interactivity;
 using Inventori_Manager.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using MsBox.Avalonia;
 using Proba_Sklada;
 using Proba_Sklada.Hardik.Connector;
 using Proba_Sklada.Hardik.Dao;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Inventori_Manager
 {
@@ -104,6 +106,33 @@ namespace Inventori_Manager
                 {
                     db.inventories.Remove(d);
                 }
+            }
+        }
+
+        private async void SelectionProd(object? sender, SelectionChangedEventArgs e)
+        {
+            try
+            {
+
+
+                var db = App.Services.GetRequiredService<dbBaza>();
+                var nuz = (sender as ComboBox);
+                if (nuz?.SelectedValue != null)
+                {
+                    string tovar = nuz.SelectedItem.ToString();
+                    if (!string.IsNullOrEmpty(tovar))
+                    {
+                        var product = db.products.AsNoTracking().FirstOrDefault(p => p.name == tovar);
+                        if (product != null)
+                        {
+                            CenikBox.Value = (decimal)product.selling_price;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                await MessageBoxManager.GetMessageBoxStandard("Внимание", ex.ToString(), MsBox.Avalonia.Enums.ButtonEnum.Ok, MsBox.Avalonia.Enums.Icon.Error).ShowAsync();
             }
         }
 
