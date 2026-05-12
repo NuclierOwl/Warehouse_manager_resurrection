@@ -1,5 +1,6 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
+using Avalonia.Platform.Storage;
 using Inventori_Manager.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
 using MsBox.Avalonia;
@@ -60,7 +61,7 @@ public partial class MenegerWindow : Window
                     "Готово",
                     "Отчёт сохранён в PDF.",
                     ButtonEnum.Ok,
-                    Icon.Success)
+                    MsBox.Avalonia.Enums.Icon.Success)
                 .ShowAsync();
         }
         catch (Exception ex)
@@ -69,7 +70,7 @@ public partial class MenegerWindow : Window
                     "Ошибка",
                     ex.Message,
                     ButtonEnum.Ok,
-                    Icon.Error)
+                    MsBox.Avalonia.Enums.Icon.Error)
                 .ShowAsync();
         }
     }

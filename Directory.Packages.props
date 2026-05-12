@@ -27,6 +27,7 @@
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Relational" Version="10.0.6" />
     <PackageVersion Include="Npgsql" Version="10.0.2" />
     <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.1" />
+    <PackageVersion Include="QuestPDF" Version="2026.5.0" />
     <PackageVersion Include="ReactiveUI" Version="23.2.1" />
     <PackageVersion Include="System.Reactive" Version="6.1.0" />
     <PackageVersion Include="Tmds.DBus.Protocol" Version="0.92.0" />
