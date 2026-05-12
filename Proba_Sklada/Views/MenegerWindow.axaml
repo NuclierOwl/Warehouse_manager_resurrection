@@ -40,33 +40,57 @@
           <TabItem Header="Статистика">
           </TabItem>
           <TabItem Header="Приход товаров">
-              <Grid RowDefinitions="Auto,*" Margin="12">
-                  <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
-                      <StackPanel>
-                          <TextBlock Text="Начальная дата" Margin="0,0,0,4"/>
-                          <DatePicker SelectedDate="{Binding StartDate}" Width="160"/>
-                      </StackPanel>
-                      <StackPanel>
-                          <TextBlock Text="Конечная дата" Margin="0,0,0,4"/>
-                          <DatePicker SelectedDate="{Binding EndDate}" Width="160"/>
-                      </StackPanel>
-                      <StackPanel>
-                          <TextBlock Text="Группировка" Margin="0,0,0,4"/>
-                          <ComboBox ItemsSource="{Binding GroupingOptions}"
-                                    SelectedItem="{Binding SelectedGrouping}"
-                                    Width="160"/>
-                      </StackPanel>
-                  </StackPanel>
+          </TabItem>
+          <TabItem Header="Отчёты">
+              <Grid RowDefinitions="Auto,*" RowSpacing="10">
+                  <Border Classes="Card" Padding="10">
+                      <Grid ColumnDefinitions="Auto,Auto,Auto,Auto,*,Auto,Auto" ColumnSpacing="10" RowDefinitions="Auto,Auto" RowSpacing="8">
+                          <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Text="Период:" />
 
-                  <Border Grid.Row="1" Margin="0,12,0,0" CornerRadius="10" BorderThickness="1" BorderBrush="{DynamicResource DashBorderBrush}" Background="{DynamicResource DashSurfaceBrush}">
-                      <Grid RowDefinitions="Auto,*" Margin="12">
-                          <TextBlock Grid.Row="0" Text="Приход / Расход товаров" FontWeight="SemiBold" Margin="0,0,0,8"/>
-                          <lvc:CartesianChart Grid.Row="1"
-                                             Series="{Binding MovementSeries}"
-                                             XAxes="{Binding XAxes}"
-                                             YAxes="{Binding YAxes}"/>
+                          <DatePicker Grid.Row="0" Grid.Column="1"
+                                      SelectedDate="{Binding StartDate}"
+                                      Width="150"/>
+                          <TextBlock Grid.Row="0" Grid.Column="2" VerticalAlignment="Center" Text="—" />
+                          <DatePicker Grid.Row="0" Grid.Column="3"
+                                      SelectedDate="{Binding EndDate}"
+                                      Width="150"/>
+
+                          <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Text="Операции:" />
+                          <ComboBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3"
+                                    ItemsSource="{Binding ReportOperationOptions}"
+                                    SelectedItem="{Binding SelectedReportOperation}"
+                                    Width="470"/>
+
+                          <Button Grid.Row="0" Grid.Column="5"
+                                  Content="Сформировать"
+                                  Command="{Binding BuildReportCommand}"
+                                  IsEnabled="{Binding IsReportNotBusy}"/>
+                          <Button Grid.Row="0" Grid.Column="6"
+                                  Content="Сохранить в PDF"
+                                  Click="ExportPdf_Click"
+                                  IsEnabled="{Binding IsReportNotBusy}"/>
                       </Grid>
                   </Border>
+
+                  <DataGrid Grid.Row="1"
+                            ItemsSource="{Binding ReportRows}"
+                            IsReadOnly="True"
+                            AutoGenerateColumns="False"
+                            GridLinesVisibility="All"
+                            CanUserResizeColumns="True">
+                      <DataGrid.Columns>
+                          <DataGridTextColumn Header="Дата" Binding="{Binding DateTime}" Width="140"/>
+                          <DataGridTextColumn Header="Операция" Binding="{Binding Operation}" Width="120"/>
+                          <DataGridTextColumn Header="Документ" Binding="{Binding DocumentNumber}" Width="130"/>
+                          <DataGridTextColumn Header="Контрагент" Binding="{Binding Counterparty}" Width="*"/>
+                          <DataGridTextColumn Header="Товар" Binding="{Binding Product}" Width="2*"/>
+                          <DataGridTextColumn Header="Кол-во" Binding="{Binding Quantity}" Width="90"/>
+                          <DataGridTextColumn Header="Цена" Binding="{Binding UnitPrice}" Width="100"/>
+                          <DataGridTextColumn Header="Сумма" Binding="{Binding TotalPrice}" Width="110"/>
+                          <DataGridTextColumn Header="Откуда" Binding="{Binding LocationFrom}" Width="120"/>
+                          <DataGridTextColumn Header="Куда" Binding="{Binding LocationTo}" Width="120"/>
+                      </DataGrid.Columns>
+                  </DataGrid>
               </Grid>
           </TabItem>
       </TabControl>

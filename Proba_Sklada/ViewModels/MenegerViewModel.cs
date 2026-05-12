@@ -9,6 +9,8 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.Input;
+using Proba_Sklada.Reports;
 
 namespace Inventori_Manager.ViewModels;
 
@@ -44,6 +46,26 @@ public partial class MenegerViewModel : ObservableObject
     [ObservableProperty]
     private Axis[] yAxes = Array.Empty<Axis>();
 
+    public ObservableCollection<ReportOperationFilter> ReportOperationOptions { get; } =
+        new(new[]
+        {
+            ReportOperationFilter.All,
+            ReportOperationFilter.Incoming,
+            ReportOperationFilter.Outgoing,
+            ReportOperationFilter.InternalMovement
+        });
+
+    [ObservableProperty]
+    private ReportOperationFilter selectedReportOperation = ReportOperationFilter.All;
+
+    [ObservableProperty]
+    private ObservableCollection<ReportRow> reportRows = new();
+
+    [ObservableProperty]
+    private bool isReportBusy;
+
+    public bool IsReportNotBusy => !IsReportBusy;
+
     public MenegerViewModel(dbBaza context)
     {
         _context = context;
@@ -53,6 +75,8 @@ public partial class MenegerViewModel : ObservableObject
     partial void OnSelectedGroupingChanged(StatsGrouping value) => _ = RefreshAsync();
     partial void OnStartDateChanged(DateTimeOffset? value) => _ = RefreshAsync();
     partial void OnEndDateChanged(DateTimeOffset? value) => _ = RefreshAsync();
+    partial void OnSelectedReportOperationChanged(ReportOperationFilter value) => _ = BuildReportAsync();
+    partial void OnIsReportBusyChanged(bool value) => OnPropertyChanged(nameof(IsReportNotBusy));
 
     public async Task RefreshAsync()
     {
@@ -158,6 +182,148 @@ public partial class MenegerViewModel : ObservableObject
         var weekStart = ISOWeek.ToDateTime(year, week, DayOfWeek.Monday).Date;
         var label = $"{weekStart:dd.MM}-{weekStart.AddDays(6):dd.MM}";
         return new PeriodKey(weekStart, label);
+    }
+
+    [RelayCommand]
+    public async Task BuildReportAsync()
+    {
+        if (IsReportBusy) return;
+        IsReportBusy = true;
+        try
+        {
+            var (start, end) = GetReportPeriod();
+
+            var incomingTask = SelectedReportOperation is ReportOperationFilter.All or ReportOperationFilter.Incoming
+                ? LoadIncomingAsync(start, end)
+                : Task.FromResult(new List<ReportRow>());
+
+            var outgoingTask = SelectedReportOperation is ReportOperationFilter.All or ReportOperationFilter.Outgoing
+                ? LoadOutgoingAsync(start, end)
+                : Task.FromResult(new List<ReportRow>());
+
+            var internalTask = SelectedReportOperation is ReportOperationFilter.All or ReportOperationFilter.InternalMovement
+                ? LoadInternalAsync(start, end)
+                : Task.FromResult(new List<ReportRow>());
+
+            await Task.WhenAll(incomingTask, outgoingTask, internalTask);
+
+            var rows = incomingTask.Result
+                .Concat(outgoingTask.Result)
+                .Concat(internalTask.Result)
+                .OrderBy(r => r.DateTime)
+                .ToList();
+
+            ReportRows = new ObservableCollection<ReportRow>(rows);
+        }
+        finally
+        {
+            IsReportBusy = false;
+        }
+    }
+
+    public async Task ExportReportPdfAsync(string filePath)
+    {
+        if (IsReportBusy) return;
+        IsReportBusy = true;
+        try
+        {
+            if (ReportRows.Count == 0)
+                await BuildReportAsync();
+
+            var (start, end) = GetReportPeriod();
+            OperationsReportPdf.SavePdf(filePath, ReportRows.ToList(), start, end, SelectedReportOperation);
+        }
+        finally
+        {
+            IsReportBusy = false;
+        }
+    }
+
+    private (DateOnly start, DateOnly end) GetReportPeriod()
+    {
+        var startDt = (StartDate ?? DateTimeOffset.Now.Date).Date;
+        var endDt = (EndDate ?? DateTimeOffset.Now.Date).Date;
+        var start = DateOnly.FromDateTime(startDt);
+        var end = DateOnly.FromDateTime(endDt);
+        if (end < start) (start, end) = (end, start);
+        return (start, end);
+    }
+
+    private async Task<List<ReportRow>> LoadIncomingAsync(DateOnly start, DateOnly end)
+    {
+        var items = await _context.postuplenia_items
+            .AsNoTracking()
+            .Include(x => x.invoice).ThenInclude(i => i.supplier)
+            .Include(x => x.product)
+            .Include(x => x.location)
+            .Where(x => x.invoice.invoice_date >= start && x.invoice.invoice_date <= end)
+            .ToListAsync();
+
+        return items.Select(x => new ReportRow(
+                DateTime: x.invoice.invoice_date.ToDateTime(TimeOnly.MinValue),
+                Operation: "Приход",
+                DocumentNumber: x.invoice.invoice_number,
+                Counterparty: x.invoice.supplier.name,
+                Product: x.product.name,
+                Quantity: x.quantity,
+                UnitPrice: x.unit_price,
+                TotalPrice: x.total_price ?? (x.unit_price * x.quantity),
+                LocationFrom: "",
+                LocationTo: x.location.location_code
+            ))
+            .ToList();
+    }
+
+    private async Task<List<ReportRow>> LoadOutgoingAsync(DateOnly start, DateOnly end)
+    {
+        var items = await _context.schet_faktura_soderzanies
+            .AsNoTracking()
+            .Include(x => x.invoice).ThenInclude(i => i.customer)
+            .Include(x => x.product)
+            .Where(x => x.invoice.invoice_date >= start && x.invoice.invoice_date <= end)
+            .ToListAsync();
+
+        return items.Select(x => new ReportRow(
+                DateTime: x.invoice.invoice_date.ToDateTime(TimeOnly.MinValue),
+                Operation: "Отгрузка",
+                DocumentNumber: x.invoice.invoice_number,
+                Counterparty: x.invoice.customer.name,
+                Product: x.product.name,
+                Quantity: x.quantity,
+                UnitPrice: x.unit_price,
+                TotalPrice: x.total_price ?? (x.unit_price * x.quantity),
+                LocationFrom: "",
+                LocationTo: ""
+            ))
+            .ToList();
+    }
+
+    private async Task<List<ReportRow>> LoadInternalAsync(DateOnly start, DateOnly end)
+    {
+        var startDt = start.ToDateTime(TimeOnly.MinValue);
+        var endDt = end.ToDateTime(TimeOnly.MaxValue);
+
+        var movements = await _context.vnutrinie_movements
+            .AsNoTracking()
+            .Include(x => x.product)
+            .Include(x => x.from_location)
+            .Include(x => x.to_location)
+            .Where(x => x.movement_date != null && x.movement_date >= startDt && x.movement_date <= endDt)
+            .ToListAsync();
+
+        return movements.Select(x => new ReportRow(
+                DateTime: x.movement_date ?? startDt,
+                Operation: "Перемещение",
+                DocumentNumber: x.movement_number,
+                Counterparty: "",
+                Product: x.product.name,
+                Quantity: x.quantity,
+                UnitPrice: 0m,
+                TotalPrice: 0m,
+                LocationFrom: x.from_location.location_code,
+                LocationTo: x.to_location.location_code
+            ))
+            .ToList();
     }
 }
 
