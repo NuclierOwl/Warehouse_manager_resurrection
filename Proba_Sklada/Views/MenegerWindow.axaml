@@ -19,6 +19,7 @@
                   <TextBlock Classes="H2" Text="Менеджер склада" />
               </StackPanel>
 
+              <!--
               <DockPanel Grid.Column="1" LastChildFill="True">
                   <ComboBox Name="ComboFilter" Width="170" Margin="0,0,10,0" SelectionChanged="SelectionChanged">
                       <ComboBoxItem>Все</ComboBoxItem>
@@ -27,6 +28,7 @@
                   </ComboBox>
                   <TextBox Name="SerchBox" Watermark="Поиск..." TextChanged="TextChanged"/>
               </DockPanel>
+              -->
 
               <Button Grid.Column="2"
                       Name="ExitButton"

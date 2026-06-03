@@ -65,27 +65,27 @@ public partial class AdminWindow : Window
         var db = App.Services.GetRequiredService<dbBaza>();
         List<user> allUsers = db.users.ToList();
 
-        if (SerchBox != null && !string.IsNullOrEmpty(SerchBox.Text))
-        {
-            allUsers = allUsers.Where(u =>
-                u.full_name.Contains(SerchBox.Text) ||
-                u.username.Contains(SerchBox.Text) ||
-                u.email.Contains(SerchBox.Text)).ToList();
-        }
+        //if (SerchBox != null && !string.IsNullOrEmpty(SerchBox.Text))
+        //{
+        //    allUsers = allUsers.Where(u =>
+        //        u.full_name.Contains(SerchBox.Text) ||
+        //        u.username.Contains(SerchBox.Text) ||
+        //        u.email.Contains(SerchBox.Text)).ToList();
+        //}
 
-        switch (ComboFilter.SelectedIndex)
-        {
-            case 0:
-                break;
-            case 1:
-                allUsers = allUsers.OrderByDescending(x => x.username).ToList();
-                break;
-            case 2:
-                allUsers = allUsers.OrderBy(x => x.username).ToList();
-                break;
-            default:
-                break;
-        }
+        //switch (ComboFilter.SelectedIndex)
+        //{
+        //    case 0:
+        //        break;
+        //    case 1:
+        //        allUsers = allUsers.OrderByDescending(x => x.username).ToList();
+        //        break;
+        //    case 2:
+        //        allUsers = allUsers.OrderBy(x => x.username).ToList();
+        //        break;
+        //    default:
+        //        break;
+        //}
 
         AllUsersBox.ItemsSource = allUsers;
     }

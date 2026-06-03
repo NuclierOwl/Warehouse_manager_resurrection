@@ -18,7 +18,7 @@
                               Foreground="{DynamicResource DashAccentBrush}" />
                     <TextBlock Classes="H2" Text="Панель администратора" />
                 </StackPanel>
-
+                <!--
                 <DockPanel Grid.Column="1" LastChildFill="True">
                     <ComboBox Name="ComboFilter"
                               Width="170"
@@ -31,7 +31,8 @@
                     <TextBox Name="SerchBox"
                              Watermark="Поиск пользователей..."
                              TextChanged="TextChanged"/>
-                </DockPanel>
+                </DockPanel> 
+                -->
 
                 <Button Grid.Column="2"
                         Name="ExitButton"

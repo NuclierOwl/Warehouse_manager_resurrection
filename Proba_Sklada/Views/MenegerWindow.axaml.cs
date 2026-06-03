@@ -45,7 +45,7 @@ public partial class MenegerWindow : Window
             var file = await StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
             {
                 Title = "Сохранить отчёт в PDF",
-                SuggestedFileName = $"warehouse-report-{DateTime.Now:yyyyMMdd-HHmm}.pdf",
+                SuggestedFileName = $"warehouse-report-{DateTime.Now:dd.MM.yyyy-HH.mm}.pdf",
                 FileTypeChoices = new List<FilePickerFileType>
                 {
                     new("PDF") { Patterns = new List<string> { "*.pdf" } }

@@ -1,0 +1,23 @@
+version: "3.9"
+services:
+  bazaV5:
+    image: postgres:latest # Используем версию Postgres 15, alpine - уменьшенный образ
+    container_name: bazaV5 # Устанавливаем имя контейнера
+    ports:
+      - "5432:5432" # Перенаправляем порт 5432 (порт Postgres) на порт 5432 хоста
+    environment:
+      POSTGRES_USER: user # Замените на желаемое имя пользователя
+      POSTGRES_PASSWORD: user # Замените на желаемый пароль
+      POSTGRES_DB: bazaV5 # Имя базы данных
+    volumes:
+      - pgdata:/var/lib/postgresql/data1 # Монтируем volume для хранения данных
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql # скрипт инициализации
+    networks:
+      - postgres_network
+
+volumes:
+  pgdata:
+
+networks:
+  postgres_network:
+    driver: bridge
