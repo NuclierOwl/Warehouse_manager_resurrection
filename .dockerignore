@@ -1,0 +1,25 @@
+# Keep the build context small and free of host/Windows build output.
+**/bin/
+**/obj/
+**/artifacts/
+
+# Not needed to build Proba_Sklada.Desktop (mobile/wasm heads).
+Proba_Sklada.Android/
+Proba_Sklada.iOS/
+Proba_Sklada.Browser/
+Proba_Sklada.slnx
+
+# Repo / tooling noise
+.git/
+.gitignore
+.vs/
+.vscode/
+.idea/
+**/*.user
+**/*.suo
+**/*.binlog
+
+# Docker files themselves
+Dockerfile
+.dockerignore
+docker-compose*.yml

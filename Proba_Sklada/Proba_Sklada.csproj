@@ -36,8 +36,6 @@
     <PackageReference Include="Npgsql" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
     <PackageReference Include="QuestPDF" />
-    <PackageReference Include="ReactiveUI" />
-    <PackageReference Include="System.Reactive" />
     <PackageReference Include="ZXing.Net" />
   </ItemGroup>
 
