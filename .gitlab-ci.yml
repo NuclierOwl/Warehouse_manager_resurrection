@@ -1,0 +1,32 @@
+variables:
+  IMAGE_NAME: "warehouse_manager:$CI_COMMIT_SHORT_SHA"
+
+stages:
+  - build
+  - test
+  - deploy
+
+real-build:
+  image: "docker:latest"
+  stage: build
+
+  before_script:
+    - echo "Начало сборки"
+  script:
+    - docker info
+    - docker build -t "$IMAGE_NAME"
+
+  after_script:
+    - echo "End"
+  tags:
+    - production
+    - build
+
+test:
+  stage: test
+  parallel:
+    matrix:
+      - RUBY: ["2.7", "3.0", "3.1"]
+        DB: ["postgres", "mysql"]
+  script:
+    - echo "$RUBY + $DB"
