@@ -30,3 +30,4 @@ test:
         DB: ["postgres", "mysql"]
   script:
     - echo "$RUBY + $DB"
+    
